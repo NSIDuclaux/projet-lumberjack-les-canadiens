@@ -5,30 +5,39 @@ from random import randint
 class Jeu:
 
     def __init__(self):
-        p.init(256, 256, "LumberJackGame")
+        p.init(128, 224, "LumberJackGame")
         p.load("res.pyxres")
 
-        self.score = 0
+        self.score = 120
         self.nb_vies = 3
 
-        self.liste_troncs = list()
+        self.liste_branches = list()
 
-        for k in range(12):
-            self.ajoute_branche()
+        self.liste_branches.append({"branche": False, "droit": False, "x": 56, "y": 176, "k": 0})
+        self.liste_branches.append({"branche": False, "droit": False, "x": 56, "y": 160, "k": 1})
+        
+        for k in range(2, 5):
+            self.ajoute_branche(k)
 
         p.run(self.update, self.draw)
 
 
-    def ajoute_branche(self):
+    def ajoute_branche(self, k):
+        proba = bool(randint(0, 4))
+        branche = True
+
+        if proba == 0:
+            branche = False
+
         infos = {
-            "branche": bool(randint(0, 1)),
-            "droit": bool(randint(0, 1))
+            "branche": branche,
+            "droit": bool(randint(0, 1)),
+            "x": 56,
+            "y": int(self.liste_branches[-1]["y"]) - 32,
+            "k": k
         }
 
-        if self.liste_troncs == []:
-            self.liste_troncs.append([infos["branche"], infos["droit"], 112, 196])
-        else:
-            self.liste_troncs.append([infos["branche"], infos["droit"], 112, self.liste_troncs[-1][3] - 16])
+        self.liste_branches.append(infos)
 
 
     def update(self):
@@ -38,39 +47,29 @@ class Jeu:
     def draw(self):
         # Fond
         p.cls(6)
-        p.rect(0, 212, 256, 64, 11)
+        p.rect(0, 192, 128, 40, 11)
 
         # Score / Vies
-        p.rect(0, 0, 256, 20, 0)
-        p.text(7, 7, "Score : " + str(self.score), 7)
+        p.blt(0, 0, 0, 16, 0, 32, 16, 6)
+        p.text(10, 6, str(self.score), 0)
 
         for k in range(self.nb_vies):
-            p.blt(238 - k * 16 - 4, 2, 0, 0, 0, 16, 16, 5)
+            p.blt(110 - k * 14, 2, 0, 0, 0, 16, 16, 6)
 
         # Nuages
 
         # Tronc 
-        for tr in self.liste_troncs:
-            if tr[0]:
-                if tr[1]:
-                    #pass
-                    p.rect(tr[2], tr[3], 32, 16, 4)
-                    #p.blt(tr[2], tr[3], 0, x, y, w, h, 5)
+        p.blt(48, 192, 0, 16, 48, 32, 16, 6)
+
+        for tr in self.liste_branches:
+            p.blt(tr["x"], tr["y"], 0, 0, 112 - tr["k"] * 32, 16, 16, 6)
+
+            if tr["branche"]:
+                if tr["droit"]:
+                    p.blt()
                 else:
-                    p.rect(tr[2], tr[3], 32, 16, 4)
-                    #p.blt(tr[2], tr[3], 0, x, y, w, h, 5)
-                    #pass
+                    pass
             else:
-                p.rect(tr[2], tr[3], 32, 16, 4)
-                #p.blt(tr[2], tr[3], 0, x, y, w, h, 5)
-                #pass
-
-        # Cailloux
-        p.blt(108, 199, 0, 16, 0, 16, 16, 5)
-        p.blt(118, 200, 0, 32, 0, 16, 16, 5)
-        p.blt(132, 199, 0, 48, 0, 16, 16, 5)
-
-        # Bucheron
-
+                pass
         
 Jeu()
