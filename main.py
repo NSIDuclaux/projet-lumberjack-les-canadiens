@@ -5,8 +5,10 @@ from random import randint
 class Jeu:
 
     def __init__(self):
-        p.init(128, 224, "LumberJackGame")
-        p.load("res.pyxres")
+        self.width = 200
+        self.height = 160
+        pyxel.init(self.width, self.height, title = 'Snake', quit_key = pyxel.KEY_ESCAPE, fps = 30)
+    
 
         self.score = 120
         self.nb_vies = 3
