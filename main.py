@@ -11,33 +11,38 @@ class Jeu:
         self.score = 120
         self.nb_vies = 3
 
-        self.liste_branches = list()
+        self.x_personnage = 1
+        self.y_personnage = 1
 
-        self.liste_branches.append({"branche": False, "droit": False, "x": 56, "y": 176, "k": 0})
-        self.liste_branches.append({"branche": False, "droit": False, "x": 56, "y": 160, "k": 1})
-        
-        for k in range(2, 5):
-            self.ajoute_branche(k)
+        self.liste_branches = list()
+        self.liste_branches.append(None)
+        self.liste_branches.append(None)
 
         p.run(self.update, self.draw)
 
 
-    def ajoute_branche(self, k):
-        proba = bool(randint(0, 4))
-        branche = True
+    def ajoute_branche(self):
+        proba = randint(1, 3)
+        if proba != 3:
+            self.liste_branches.append("""Branche()""")
+        else:
+            self.liste_branches.append(None)
 
-        if proba == 0:
-            branche = False
 
-        infos = {
-            "branche": branche,
-            "droit": bool(randint(0, 1)),
-            "x": 56,
-            "y": int(self.liste_branches[-1]["y"]) - 32,
-            "k": k
-        }
+    def coupe_tronc(self):
+        if p.btn(p.KEY_LEFT):
+            p.blt(self.x_personnage, self.y_personnage, 0, 48, 64, 16, 16, 6)
+            p.wait(0.2)
+            p.blt(self.x_personnage, self.y_personnage, 0, 48, 96, 16, 16, 6)
+            p.wait(0.05)
+            p.blt(self.x_personnage, self.y_personnage, 0, 48, 32, 16, 16, 6)
+        if p.btn(p.KEY_RIGHT):
+            p.blt(self.x_personnage, self.y_personnage - 32, 0, 48, 48, 16, 16, 6)
+            p.wait(0.2)
+            p.blt(self.x_personnage, self.y_personnage - 32, 0, 48, 80, 16, 16, 6)
+            p.wait(0.05)
+            p.blt(self.x_personnage, self.y_personnage - 32, 0, 48, 16, 16, 16, 6)
 
-        self.liste_branches.append(infos)
 
 
     def update(self):
@@ -49,27 +54,23 @@ class Jeu:
         p.cls(6)
         p.rect(0, 192, 128, 40, 11)
 
+        # Tronc 
+        p.blt(48, 192, 0, 16, 48, 32, 16, 6)        
+        p.blt(56, 80, 0, 0, 16, 16, 112, 6)
+        p.blt(56, 0, 0, 0, 16, 16, 80, 6)
+
+        # Branches
+        for br in self.liste_branches:
+            if br is not None:
+                p.blt(br.x, br.y, 0, 16, br.x, 32, 32, 6)
+
+
         # Score / Vies
         p.blt(0, 0, 0, 16, 0, 32, 16, 6)
         p.text(10, 6, str(self.score), 0)
 
         for k in range(self.nb_vies):
             p.blt(110 - k * 14, 2, 0, 0, 0, 16, 16, 6)
-
-        # Nuages
-
-        # Tronc 
-        p.blt(48, 192, 0, 16, 48, 32, 16, 6)
-
-        for tr in self.liste_branches:
-            p.blt(tr["x"], tr["y"], 0, 0, 112 - tr["k"] * 32, 16, 16, 6)
-
-            if tr["branche"]:
-                if tr["droit"]:
-                    p.blt()
-                else:
-                    pass
-            else:
-                pass
+        
         
 Jeu()
