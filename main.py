@@ -1,4 +1,3 @@
-
 import pyxel as p
 from random import randint
 from time import *
