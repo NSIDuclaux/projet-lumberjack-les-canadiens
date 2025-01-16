@@ -23,7 +23,7 @@ class Jeu:
     
         self.carre_state = False
 
-        self.score = 120
+        self.score = 0
         self.nb_vies = 3
 
         self.x_personnage = 20
@@ -31,8 +31,8 @@ class Jeu:
 
 
         self.hauteur_branche = 96
-
         self.liste_branches = list()
+
         self.liste_branches.append(None)
         self.liste_branches.append(None)
         
@@ -44,10 +44,10 @@ class Jeu:
 
 
     def ajoute_branche(self):
-        proba = randint(1, 4)
-        if proba != 4:
+        proba = randint(1, 3)
+        if proba != 3:
             self.liste_branches.append(Branche(self.hauteur_branche))
-            self.hauteur_branche -= 32
+            self.hauteur_branche -= 64
         else:
             self.liste_branches.append(None)
 
@@ -78,6 +78,8 @@ class Jeu:
         if self.liste_branches[0] is not None:
             if (cote == "droite" and self.liste_branches[0].x == 64) or (cote == "gauche" and self.liste_branches[0].x == 16):
                 self.nb_vies -= 1
+            else:
+                self.score += 1
 
         self.hauteur_branche += 32 
 
