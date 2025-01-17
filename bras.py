@@ -25,8 +25,8 @@ class Main:
         for _ in range(6):
             self.ajoute_branche()
 
-        self.file_tronc = [{"x":48, "y":192, "img": 0, "branche":False, "droit":False},
-{"x":48, "y":192, "img": 0, "branche":False, "droit":False}]
+        self.file_tronc = [{"x":48, "y":192, "img": 0, "branche":False, "droit":False, "nb": 0},
+{"x":48, "y":192, "img": 0, "branche":False, "droit":False, "nb":1}]
         self.tab_y_tronc = [112, 96, 80, 64, 48, 32, 16]
         for i in range(7):
             self.file_tronc.append(self.tab_y_tronc[i])
