@@ -30,45 +30,37 @@ class Main:
                                 "branche" : False, 
                                 "droit" : False, 
                                 "nb" : 0})
+        
         self.file_tronc.append({"x" : self.x_origine_tronc, 
                                 "y" : self.y_origine_tronc + (len(self.file_tronc) + 1)* self.taille_img, 
                                 "img" : self.img, 
                                 "branche" : False, 
                                 "droit" : False, 
                                 "nb" : 1})
-            
-        self.affiche_tronc()
 
         p.run(self.update, self.draw)
     
     def ajoute_tronc(self):
         proba = randint(1, 3)
+        nb_tronc = len(self.file_tronc)
         if proba != 3:
-            self.file_tronc.append({"x" : self.x_origine_tronc, 
-                                    "y" : self.y_origine_tronc + (len(self.file_tronc) + 1)* self.taille_img, 
-                                    "img" : self.img, 
-                                    "branche" : True, 
-                                    "droit" : int(proba), 
-                                    "nb" : len(self.file_tronc)})
+            self.file_tronc.append({
+                "x": self.x_origine_tronc,
+                "y": self.y_origine_tronc + nb_tronc * self.taille_img,
+                "img": self.img,
+                "branche": True,
+                "droit": int(proba),
+                "nb": nb_tronc
+            })
         else:
-            self.file_tronc.append({"x" : self.x_origine_tronc, 
-                                    "y" : self.y_origine_tronc + (len(self.file_tronc) + 1)* self.taille_img, 
-                                    "img" : self.img, 
-                                    "branche" : False, 
-                                    "droit" : False, 
-                                    "nb" : len(self.file_tronc)})
-    
-    def affiche_tronc(self):
-        for i in range(len(self.file_tronc)):
-            p.blt(self.file_tronc[i]["x"], self.file_tronc[i]["y"], self.file_tronc[i]["img"], 0, self.tab_y_tronc[self.file_tronc[i]["nb"] % len(self.tab_y_tronc)], self.taille_img, self.taille_img, self.trans_font)
-    
-    def affiche_branche(self):
-        for tronc in self.file_tronc:
-            if tronc["branche"]:
-                if tronc["droit"]:
-                    p.blt(tronc["x"], tronc["y"], tronc["img"], 16, 16, self.taille_img * 2, self.taille_img * 2, self.trans_font)
-                else:
-                    p.blt(tronc["x"], tronc["y"], tronc["img"], 16, 64, self.taille_img * 2, self.taille_img * 2, self.trans_font)
+            self.file_tronc.append({
+                "x": self.x_origine_tronc,
+                "y": self.y_origine_tronc + nb_tronc * self.taille_img,
+                "img": self.img,
+                "branche": False,
+                "droit": False,
+                "nb": nb_tronc
+            })
     
     def coupe_tronc(self):
         if p.btn(p.KEY_LEFT):
@@ -86,16 +78,26 @@ class Main:
             p.blt(self.x_personnage, self.y_personnage - 32, 0, 48, 16, 16, 16, 6)
 
     def update(self):
-        self.ajoute_tronc()
-        self.affiche_tronc()
-        self.affiche_branche()# A finir
         self.coupe_tronc()
         
-
     def draw(self):
-        p.cls(6)
+        p.cls(self.trans_font)
         p.rect(0, 192, 128, 40, 11)
-
+        
+        # Affichage des troncs
+        for tronc in self.file_tronc:
+            y_position = self.tab_y_tronc[tronc["nb"] % len(self.tab_y_tronc)]
+            p.blt(tronc["x"], tronc["y"], tronc["img"], 0, y_position, self.taille_img, self.taille_img, self.trans_font)
+        
+        # Affichage des branches
+        for tronc in self.file_tronc:
+            if tronc["branche"]:
+                if tronc["droit"]:
+                    p.blt(tronc["x"], tronc["y"], tronc["img"], 16, 16, self.taille_img * 2, self.taille_img * 2, self.trans_font)
+                else:
+                    p.blt(tronc["x"], tronc["y"], tronc["img"], 16, 64, self.taille_img * 2, self.taille_img * 2, self.trans_font)
+        
+        # Affichage du score et des vies
         p.blt(0, 0, 0, 16, 0, 32, 16, 6)
         p.text(10, 6, str(self.score), 0)
         for k in range(self.nb_vies):
