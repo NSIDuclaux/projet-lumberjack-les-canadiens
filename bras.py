@@ -23,19 +23,19 @@ class Main:
         self.x_origine_tronc = 48
         self.y_origine_tronc = 192
         
-        self.file_tronc = [{"x" : self.x_origine_tronc, 
-                            "y" : self.y_origine_tronc, 
-                            "img" : self.img, 
-                            "branche" : False, 
-                            "droit" : False, 
-                            "nb" : 0},
-                           
-                           {"x" : self.x_origine_tronc, 
-                            "y" : self.y_origine_tronc + (len(self.file_tronc) + 1)* self.taille_img, 
-                            "img" : self.img, 
-                            "branche" : False, 
-                            "droit" : False, 
-                            "nb" : 1}]
+        self.file_tronc = list()
+        self.file_tronc.append({"x" : self.x_origine_tronc, 
+                                "y" : self.y_origine_tronc, 
+                                "img" : self.img, 
+                                "branche" : False, 
+                                "droit" : False, 
+                                "nb" : 0})
+        self.file_tronc.append({"x" : self.x_origine_tronc, 
+                                "y" : self.y_origine_tronc + (len(self.file_tronc) + 1)* self.taille_img, 
+                                "img" : self.img, 
+                                "branche" : False, 
+                                "droit" : False, 
+                                "nb" : 1})
         
         for _ in range(len(self.file_tronc)):
             self.affiche_tronc()
@@ -67,11 +67,9 @@ class Main:
         for i in self.file_tronc:
             if self.file_tronc[i]["branche"]:
                 if self.file_tronc[i]["droit"]:
-                    p.blt(self.file_tronc[i]["x"], self.file_tronc[i]["y"], self.file_tronc[i]["img"], 0, self.file_tronc.pop(0), self.taille_img, self.taille_img, self.trans_font)
+                    p.blt(self.file_tronc[i]["x"], self.file_tronc[i]["y"], self.file_tronc[i]["img"], 16, 16, self.taille_img * 2, self.taille_img * 2, self.trans_font)
                 else:
-                    p.blt(self.file_tronc[i]["x"], self.file_tronc[i]["y"], self.file_tronc[i]["img"], 0, self.file_tronc.pop(0), self.taille_img, self.taille_img, self.trans_font)
-            else:
-                p.blt(self.file_tronc[i]["x"], self.file_tronc[i]["y"], self.file_tronc[i]["img"], 0, self.file_tronc.pop(0), self.taille_img, self.taille_img, self.trans_font)
+                    p.blt(self.file_tronc[i]["x"], self.file_tronc[i]["y"], self.file_tronc[i]["img"], 16, 64, self.taille_img * 2, self.taille_img * 2, self.trans_font)
     
     def coupe_tronc(self):
         if p.btn(p.KEY_LEFT):
