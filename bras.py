@@ -61,41 +61,40 @@ class Main:
                 "droit": False,
                 "nb": nb_tronc
             })
-    
-    def coupe_tronc(self):
-        if p.btn(p.KEY_LEFT):
-            p.blt(self.x_personnage, self.y_personnage, 0, 48, 64, 16, 16, 6)
-            sleep(0.2)
-            p.blt(self.x_personnage, self.y_personnage, 0, 48, 96, 16, 16, 6)
-            sleep(0.05)
-            p.blt(self.x_personnage, self.y_personnage, 0, 48, 32, 16, 16, 6)
-        
-        if p.btn(p.KEY_RIGHT):
-            p.blt(self.x_personnage, self.y_personnage - 32, 0, 48, 48, 16, 16, 6)
-            sleep(0.2)
-            p.blt(self.x_personnage, self.y_personnage - 32, 0, 48, 80, 16, 16, 6)
-            sleep(0.05)
-            p.blt(self.x_personnage, self.y_personnage - 32, 0, 48, 16, 16, 16, 6)
-
-    def update(self):
-        self.coupe_tronc()
-        
-    def draw(self):
-        p.cls(self.trans_font)
-        p.rect(0, 192, 128, 40, 11)
-        
-        # Affichage des troncs
+    def affiche_tronc(self):
         for tronc in self.file_tronc:
             y_position = self.tab_y_tronc[tronc["nb"] % len(self.tab_y_tronc)]
             p.blt(tronc["x"], tronc["y"], tronc["img"], 0, y_position, self.taille_img, self.taille_img, self.trans_font)
-        
-        # Affichage des branches
+            
+    def affiche_branches(self):
         for tronc in self.file_tronc:
             if tronc["branche"]:
                 if tronc["droit"]:
                     p.blt(tronc["x"], tronc["y"], tronc["img"], 16, 16, self.taille_img * 2, self.taille_img * 2, self.trans_font)
                 else:
                     p.blt(tronc["x"], tronc["y"], tronc["img"], 16, 64, self.taille_img * 2, self.taille_img * 2, self.trans_font)
+    
+    def coupe_tronc(self):
+        if p.btn(p.KEY_LEFT):
+            p.blt(self.x_personnage, self.y_personnage, 0, 48, 64, 16, 16)
+            p.blt(self.x_personnage, self.y_personnage, 0, 48, 96, 16, 16)
+            p.blt(self.x_personnage, self.y_personnage, 0, 48, 32, 16, 16)
+        
+        if p.btn(p.KEY_RIGHT):
+            p.blt(self.x_personnage, self.y_personnage - 32, 0, 48, 48, 16, 16)
+            p.blt(self.x_personnage, self.y_personnage - 32, 0, 48, 80, 16, 16)
+            p.blt(self.x_personnage, self.y_personnage - 32, 0, 48, 16, 16, 16)
+
+    def update(self):
+        pass
+        
+    def draw(self):
+        p.cls(self.trans_font)
+        p.rect(0, 192, 128, 40, 11)
+        
+        self.coupe_tronc()
+        self.affiche_tronc()
+        self.affiche_branches()
         
         # Affichage du score et des vies
         p.blt(0, 0, 0, 16, 0, 32, 16, 6)
