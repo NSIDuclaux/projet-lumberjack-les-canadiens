@@ -63,12 +63,12 @@ class Main:
             p.blt(self.file_tronc[i]["x"], self.file_tronc[i]["y"], self.file_tronc[i]["img"], 0, self.tab_y_tronc[self.file_tronc[i]["nb"] % len(self.tab_y_tronc)], self.taille_img, self.taille_img, self.trans_font)
     
     def affiche_branche(self):
-        for i in self.file_tronc:
-            if self.file_tronc[i]["branche"]:
-                if self.file_tronc[i]["droit"]:
-                    p.blt(self.file_tronc[i]["x"], self.file_tronc[i]["y"], self.file_tronc[i]["img"], 16, 16, self.taille_img * 2, self.taille_img * 2, self.trans_font)
-                else:
-                    p.blt(self.file_tronc[i]["x"], self.file_tronc[i]["y"], self.file_tronc[i]["img"], 16, 64, self.taille_img * 2, self.taille_img * 2, self.trans_font)
+    for tronc in self.file_tronc:
+        if tronc["branche"]:
+            if tronc["droit"]:
+                p.blt(tronc["x"], tronc["y"], tronc["img"], 16, 16, self.taille_img * 2, self.taille_img * 2, self.trans_font)
+            else:
+                p.blt(tronc["x"], tronc["y"], tronc["img"], 16, 64, self.taille_img * 2, self.taille_img * 2, self.trans_font)
     
     def coupe_tronc(self):
         if p.btn(p.KEY_LEFT):
