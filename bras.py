@@ -36,9 +36,8 @@ class Main:
                                 "branche" : False, 
                                 "droit" : False, 
                                 "nb" : 1})
-        
-        for _ in range(len(self.file_tronc)):
-            self.affiche_tronc()
+            
+        self.affiche_tronc()
 
         p.run(self.update, self.draw)
     
@@ -60,7 +59,7 @@ class Main:
                                     "nb" : len(self.file_tronc)})
     
     def affiche_tronc(self):
-        for i in self.file_tronc:
+        for i in range(len(self.file_tronc)):
             p.blt(self.file_tronc[i]["x"], self.file_tronc[i]["y"], self.file_tronc[i]["img"], 0, self.tab_y_tronc[self.file_tronc[i]["nb"] % len(self.tab_y_tronc)], self.taille_img, self.taille_img, self.trans_font)
     
     def affiche_branche(self):
