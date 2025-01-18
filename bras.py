@@ -15,7 +15,7 @@ class Main:
 
         # Position initiale du personnage
         self.x_personnage = 40
-        self.y_personnage = 176
+        self.y_personnage = 180
 
         # Variables d'animation
         self.animation_image = 0
@@ -152,11 +152,12 @@ class Main:
         """Dessine tous les éléments du jeu à chaque frame."""
         p.cls(self.trans_font)
         p.rect(0, 192, 128, 40, 11)
+        p.blt(self.x_origine_tronc - 8, self.y_origine_tronc + 16, self.img, 16, 48, self.taille_img * 2, self.taille_img)
         
-        self.coupe_tronc()
         self.affiche_tronc()
         self.affiche_branches()
-        
+        self.coupe_tronc()
+
         # Affichage du score et des vies
         p.blt(0, 0, self.img, 16, 0, self.taille_img * 2 , self.taille_img, self.trans_font)
         p.text(10, 6, str(self.score), 0)
