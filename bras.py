@@ -32,7 +32,7 @@ class Main:
         self.x_origine_tronc = 48
         self.y_origine_tronc = 192
 
-        # Liste des troncs
+        # Liste des troncs de départ
         self.file_tronc = list()
         self.file_tronc.append({
             "x": self.x_origine_tronc,
