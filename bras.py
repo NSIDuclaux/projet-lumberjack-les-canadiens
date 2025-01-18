@@ -152,7 +152,7 @@ class Main:
         """Dessine tous les éléments du jeu à chaque frame."""
         p.cls(self.trans_font)
         p.rect(0, 192, 128, 40, 11)
-        p.blt(self.x_origine_tronc - 8, self.y_origine_tronc + 16, self.img, 16, 48, self.taille_img * 2, self.taille_img)
+        p.blt(self.x_origine_tronc - 8, self.y_origine_tronc + 17, self.img, 16, 48, self.taille_img * 2, self.taille_img)
         
         self.affiche_tronc()
         self.affiche_branches()
