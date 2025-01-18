@@ -24,10 +24,12 @@ class Main:
         self.animation_direction = None
         self.animation_repos = None
 
-        # Variables pour les troncs
+        #Aurtres variables
         self.img = 0
         self.taille_img = 16
         self.trans_font = 6
+        
+        # Variables pour les troncs
         self.tab_y_tronc = [112, 96, 80, 64, 48, 32, 16]
         self.x_origine_tronc = 48
         self.y_origine_tronc = 192
@@ -109,9 +111,9 @@ class Main:
         else:
             # Affiche le personnage dans la dernière image de l'animation
             if self.animation_repos == "Gauche":
-                p.blt(self.x_personnage, self.y_personnage, 0, 48, 32, 16, 16)
+                p.blt(self.x_personnage, self.y_personnage, self.img, 48, 32, self.taille_img, self.taille_img)
             elif self.animation_repos == "Droite":
-                p.blt(self.x_personnage, self.y_personnage - 32, 0, 48, 16, 16, 16)
+                p.blt(self.x_personnage, self.y_personnage - 32, self.img, 48, 16, self.taille_img, self)
 
     def animation_personnage(self, direction):
         """Gère les différentes étapes de l'animation du personnage."""
@@ -122,21 +124,21 @@ class Main:
 
         if direction == "Gauche":
             if self.animation_image == 0:
-                p.blt(self.x_personnage, self.y_personnage, 0, 48, 64, 16, 16)
+                p.blt(self.x_personnage, self.y_personnage, self.img, 48, 64, self.taille_img, self.taille_img)
             elif self.animation_image == 1:
-                p.blt(self.x_personnage, self.y_personnage, 0, 48, 96, 16, 16)
+                p.blt(self.x_personnage, self.y_personnage, self.img, 48, 96, self.taille_img, self.taille_img)
             elif self.animation_image == 2:
-                p.blt(self.x_personnage, self.y_personnage, 0, 48, 32, 16, 16)
+                p.blt(self.x_personnage, self.y_personnage, self.img, 48, 32, self.taille_img, self.taille_img)
                 self.animation_direction = None
                 self.animation_image = 0
             self.animation_repos = "Gauche"
         elif direction == "Droite":
             if self.animation_image == 0:
-                p.blt(self.x_personnage, self.y_personnage - 32, 0, 48, 48, 16, 16)
+                p.blt(self.x_personnage, self.y_personnage - 32, self.img, 48, 48, self.taille_img, self.taille_img)
             elif self.animation_image == 1:
-                p.blt(self.x_personnage, self.y_personnage - 32, 0, 48, 80, 16, 16)
+                p.blt(self.x_personnage, self.y_personnage - 32, self.img, 48, 80, self.taille_img, self.taille_img)
             elif self.animation_image == 2:
-                p.blt(self.x_personnage, self.y_personnage - 32, 0, 48, 16, 16, 16)
+                p.blt(self.x_personnage, self.y_personnage - 32, self.img, 48, 16, self.taille_img, self.taille_img)
                 self.animation_direction = None
                 self.animation_image = 0
             self.animation_repos = "Droite"
@@ -155,10 +157,10 @@ class Main:
         self.affiche_branches()
         
         # Affichage du score et des vies
-        p.blt(0, 0, 0, 16, 0, 32, 16, 6)
+        p.blt(0, 0, self.img, 16, 0, self.taille_img * 2, self.taille_img, 6)
         p.text(10, 6, str(self.score), 0)
         for k in range(self.nb_vies):
-            p.blt(110 - k * 14, 2, 0, 0, 0, 16, 16, 6)
+            p.blt(110 - k * 14, 2, self.img, 0, 0, self.taille_img, self.taille_img, 6)
 
 # Démarrage du jeu
 Main()
