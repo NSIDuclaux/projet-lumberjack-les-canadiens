@@ -4,18 +4,22 @@ from random import randint
 class Main:
     def __init__(self):
         # Initialisation de la fenêtre de jeu
-        width = 128
-        height = 224
-        p.init(width, height, title='LumberJackGame', quit_key=p.KEY_ESCAPE, fps=30)
+        self.width = 99
+        self.height = 176
+        p.init(self.width, self.height, title='LumberJackGame', quit_key=p.KEY_ESCAPE, fps=30)
         p.load("res.pyxres")
 
         # Initialisation des variables de jeu
         self.score = 0
         self.nb_vies = 3
 
+        self.img = 0
+        self.taille_img = 16
+        self.trans_font = 6
+
         # Position initiale du personnage
-        self.x_personnage = 40
-        self.y_personnage = 180
+        self.x_personnage = self.width // 2 - self.taille_img - self.taille_img // 2
+        self.y_personnage = self.height // 2 + self.height // 4
 
         # Variables d'animation
         self.animation_image = 0
@@ -24,16 +28,12 @@ class Main:
         self.animation_direction = None
         self.animation_repos = None
 
-        #Aurtres variables
-        self.img = 0
-        self.taille_img = 16
-        self.trans_font = 6
+
         
         # Variables pour les troncs
         self.tab_y_tronc = [112, 96, 80, 64, 48, 32, 16]
-        self.x_origine_tronc = width // 2 - self.taille_img // 2
-        self.y_origine_tronc = 176
-
+        self.x_origine_tronc = self.width // 2 - self.taille_img // 2
+        self.y_origine_tronc = self.y_personnage - self.taille_img // 2 + self.taille_img // 4 + self.taille_img // 8
         # Liste des troncs de départ
         self.file_tronc = list()
         self.file_tronc.append({
@@ -58,7 +58,7 @@ class Main:
 
     def ajoute_tronc(self):
         """Ajoute un nouveau tronc à la liste des troncs avec une probabilité d'ajouter une branche."""
-        if self.file_tronc[-1]["y"] > 0:
+        if self.nb_vies > 0 and self.file_tronc[-1]["y"] > 0:
             proba = randint(1, 3)
             nb_tronc = len(self.file_tronc)
             if proba != 3:
@@ -79,6 +79,8 @@ class Main:
                     "droit": False,
                     "nb": nb_tronc
                                         })
+        if self.nb_vies > 0 and self.file_tronc[0]["y"] > 170:
+            self.file_tronc[0]["branche"] = False
 
     def affiche_tronc(self):
         """Affiche tous les troncs dans la liste des troncs."""
@@ -91,9 +93,40 @@ class Main:
         for tronc in self.file_tronc:
             if tronc["branche"]:
                 if tronc["droit"]:
-                    p.blt(tronc["x"] - 32, tronc["y"], tronc["img"], 16, 16, self.taille_img * 2, self.taille_img * 2, self.trans_font)
+                    p.blt(tronc["x"] - self.taille_img * 2, tronc["y"], tronc["img"], 16, 16, self.taille_img * 2, self.taille_img * 2, self.trans_font)
                 else:
-                    p.blt(tronc["x"] + 16, tronc["y"], tronc["img"], 16, 64, self.taille_img * 2, self.taille_img * 2, self.trans_font)
+                    p.blt(tronc["x"] + self.taille_img, tronc["y"], tronc["img"], 16, 64, self.taille_img * 2, self.taille_img * 2, self.trans_font)
+
+    def retirer_tronc(self):
+        self.file_tronc.pop(0)
+        for tronc in self.file_tronc:
+            tronc["y"] += self.taille_img
+
+    def collisions(self):    
+        if self.file_tronc[0]["branche"]:
+            if (not self.file_tronc[0]["droit"] and self.x_personnage == 40) or (self.file_tronc[0]["droit"] and self.x_personnage == 62):
+                self.nb_vies -= 1
+            else:
+                self.score += 1
+        
+        if self.nb_vies == 0:
+            self.mort()
+
+    def mort(self):
+        """Affiche l'écran de fin de jeu avec les animations et les messages."""
+        while True:
+            p.cls(self.trans_font)
+            p.text(40, 100, "GAME OVER", 7)
+            p.text(40, 120, "Score: " + str(self.score), 7)
+            p.text(40, 140, "Press ESC to exit", 7)
+
+            # Affiche le paradis
+            p.rect(0, 192, 128, 40, 11)
+            p.blt(self.x_origine_tronc - 8, self.y_origine_tronc + 16, self.img, 16, 48, self.taille_img * 2, self.taille_img)
+            p.blt(128 // 2 - self.taille_img // 2, 176, self.img, 0, 128, self.taille_img, self.taille_img, self.trans_font)
+
+            self.file_tronc = list()
+            p.show()
 
     def coupe_tronc(self):
         """Gère l'animation du personnage lorsqu'il coupe un tronc."""
@@ -102,10 +135,14 @@ class Main:
                 self.animation_direction = "Gauche"
                 self.animation_image = 0
                 self.animation_timer = 0
+                self.retirer_tronc()
+                self.collisions()
             elif p.btnp(p.KEY_RIGHT):
                 self.animation_direction = "Droite"
                 self.animation_image = 0
                 self.animation_timer = 0
+                self.retirer_tronc()
+                self.collisions()
 
         if self.animation_direction is not None:
             self.animation_personnage(self.animation_direction)
@@ -135,11 +172,11 @@ class Main:
             self.animation_repos = "Gauche"
         elif direction == "Droite":
             if self.animation_image == 0:
-                p.blt(self.x_personnage + 32, self.y_personnage, self.img, 48, 64, self.taille_img, self.taille_img)
+                p.blt(self.x_personnage + self.taille_img * 2, self.y_personnage, self.img, 48, 64, self.taille_img, self.taille_img)
             elif self.animation_image == 1:
-                p.blt(self.x_personnage + 32, self.y_personnage, self.img, 48, 96, self.taille_img, self.taille_img)
+                p.blt(self.x_personnage + self.taille_img * 2, self.y_personnage, self.img, 48, 96, self.taille_img, self.taille_img)
             elif self.animation_image == 2:
-                p.blt(self.x_personnage + 32, self.y_personnage, self.img, 48, 32, self.taille_img, self.taille_img)
+                p.blt(self.x_personnage + self.taille_img * 2, self.y_personnage, self.img, 48, 32, self.taille_img, self.taille_img)
                 self.animation_direction = None
                 self.animation_image = 0
             self.animation_repos = "Droite"
@@ -151,18 +188,18 @@ class Main:
     def draw(self):
         """Dessine tous les éléments du jeu à chaque frame."""
         p.cls(self.trans_font)
-        p.rect(0, 192, 128, 40, 11)
-        p.blt(self.x_origine_tronc - 8, self.y_origine_tronc + 17, self.img, 16, 48, self.taille_img * 2, self.taille_img)
+        p.rect(0, self.height - self.taille_img * 3, self.width, self.taille_img * 3, 11)
+        p.blt(self.x_origine_tronc - self.taille_img // 2, self.y_origine_tronc + self.taille_img, self.img, 16, 48, self.taille_img * 2, self.taille_img)
         
         self.affiche_tronc()
         self.affiche_branches()
         self.coupe_tronc()
 
         # Affichage du score et des vies
-        p.blt(0, 0, self.img, 16, 0, self.taille_img * 2 , self.taille_img, self.trans_font)
-        p.text(10, 6, str(self.score), 0)
-        for k in range(self.nb_vies):
-            p.blt(110 - k * 14, 2, self.img, 0, 0, self.taille_img, self.taille_img, self.trans_font)
+        p.blt(0, 1, self.img, 16, 0, self.taille_img * 2 , self.taille_img, self.trans_font)
+        p.text(self.width // 9 - self.taille_img // 4, self.taille_img // 2 - self.taille_img // 8, str(self.score), 0)
+        for vie in range(self.nb_vies):
+            p.blt(self.width - self.taille_img - vie * 14, 1, self.img, 0, 0, self.taille_img, self.taille_img, self.trans_font)
 
 # Démarrage du jeu
 Main()
