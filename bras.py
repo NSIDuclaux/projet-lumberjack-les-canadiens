@@ -58,7 +58,7 @@ class Main:
 
     def ajoute_tronc(self):
         """Ajoute un nouveau tronc à la liste des troncs avec une probabilité d'ajouter une branche."""
-        if self.nb_vies > 0 and self.file_tronc[-1]["y"] > -999999:
+        if self.nb_vies > 0 and self.file_tronc[-1]["y"] > -999:
             proba = randint(1, 3)
             nb_tronc = len(self.file_tronc)
             if proba != 3:
@@ -175,7 +175,7 @@ class Main:
 
         if direction == "Gauche":
             if self.animation_image == 0:
-                p.blt(self.x_personnage, self.y_personnage, self.img, 48, 48, self.taille_img, self.taille_img, 6)
+                p.blt(self.x_personnage, self.y_personnage, self.img, 48, 48, self.taille_img, self.taille_img, self.trans_font)
             elif self.animation_image == 1:
                 p.blt(self.x_personnage, self.y_personnage, self.img, 48, 80, self.taille_img, self.taille_img, 6)
             elif self.animation_image == 2:
