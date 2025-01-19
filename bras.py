@@ -58,7 +58,7 @@ class Main:
 
     def ajoute_tronc(self):
         """Ajoute un nouveau tronc à la liste des troncs avec une probabilité d'ajouter une branche."""
-        if self.nb_vies > 0 and self.file_tronc[-1]["y"] > 0:
+        if self.nb_vies > 0 and self.file_tronc[-1]["y"] > -255:
             proba = randint(1, 3)
             nb_tronc = len(self.file_tronc)
             if proba != 3:
@@ -79,7 +79,7 @@ class Main:
                     "droit": False,
                     "nb": nb_tronc
                                         })
-        if self.nb_vies > 0 and self.file_tronc[0]["y"] > 170:
+        if self.nb_vies > 0 and self.file_tronc[0]["y"] > self.y_origine_tronc - self.taille_img:
             self.file_tronc[0]["branche"] = False
 
     def affiche_tronc(self):
@@ -103,11 +103,21 @@ class Main:
             tronc["y"] += self.taille_img
 
     def collisions(self):    
-        if self.file_tronc[0]["branche"]:
-            if (not self.file_tronc[0]["droit"] and self.x_personnage == self.x_origine_tronc - self.taille_img) or (self.file_tronc[0]["droit"] and self.x_personnage == self.x_origine_tronc + self.taille_img):
+        if self.file_tronc[1]["branche"]:
+            if (not self.file_tronc[1]["droit"] and not self.animation_direction == "Gauche") or (self.file_tronc[1]["droit"] and not self.animation_direction == "Droite"):
                 self.nb_vies -= 1
+                if self.animation_repos == "Gauche":
+                    for _ in range(15):
+                        p.blt(self.x_personnage, self.y_personnage, self.img, 48, 112, self.taille_img, self.taille_img, 6)
+                        p.flip()
+                elif self.animation_repos == "Droite":
+                    for _ in range(15):
+                        p.blt(self.x_personnage + self.taille_img * 2, self.y_personnage, self.img, 48, 112, self.taille_img, self.taille_img, 6)
+                        p.flip()
             else:
                 self.score += 1
+        else:
+            self.score += 1
         if self.nb_vies == 0:
             self.mort()
 
@@ -115,9 +125,9 @@ class Main:
         """Affiche l'écran de fin de jeu avec les animations et les messages."""
         while True:
             p.cls(self.trans_font)
-            p.text(self.x_personnage + self.taille_img // 2, self.height // 2 - self.height // 4, "GAME OVER", 7)
-            p.text(self.x_personnage + self.taille_img // 2, self.height // 2 - self.height // 4 + self.taille_img, "Score: " + str(self.score), 7)
-            p.text(self.x_personnage - self.taille_img // 4, self.height // 2 - self.height // 4 + self.taille_img * 2, "Press ESC to exit", 7)
+            p.text(self.x_personnage + self.taille_img // 2, self.height // 2 - self.height // 4, "GAME OVER", 0)
+            p.text(self.x_personnage + self.taille_img // 2, self.height // 2 - self.height // 4 + self.taille_img, "Score: " + str(self.score), 0)
+            p.text(self.x_personnage - self.taille_img // 4, self.height // 2 - self.height // 4 + self.taille_img * 2, "Press ESC to exit", 0)
 
             # Affiche le paradis
             p.rect(0, self.height - self.taille_img * 3, self.width, self.taille_img * 3, 11)
