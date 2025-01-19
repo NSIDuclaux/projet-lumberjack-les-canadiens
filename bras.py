@@ -58,7 +58,7 @@ class Main:
 
     def ajoute_tronc(self):
         """Ajoute un nouveau tronc à la liste des troncs avec une probabilité d'ajouter une branche."""
-        if self.nb_vies > 0 and self.file_tronc[-1]["y"] > -255:
+        if self.nb_vies > 0 and self.file_tronc[-1]["y"] > -999999:
             proba = randint(1, 3)
             nb_tronc = len(self.file_tronc)
             if proba != 3:
