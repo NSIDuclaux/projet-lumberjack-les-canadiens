@@ -104,11 +104,10 @@ class Main:
 
     def collisions(self):    
         if self.file_tronc[0]["branche"]:
-            if (not self.file_tronc[0]["droit"] and self.x_personnage == 40) or (self.file_tronc[0]["droit"] and self.x_personnage == 62):
+            if (not self.file_tronc[0]["droit"] and self.x_personnage == self.x_origine_tronc - self.taille_img) or (self.file_tronc[0]["droit"] and self.x_personnage == self.x_origine_tronc + self.taille_img):
                 self.nb_vies -= 1
             else:
                 self.score += 1
-        
         if self.nb_vies == 0:
             self.mort()
 
@@ -116,14 +115,18 @@ class Main:
         """Affiche l'écran de fin de jeu avec les animations et les messages."""
         while True:
             p.cls(self.trans_font)
-            p.text(40, 100, "GAME OVER", 7)
-            p.text(40, 120, "Score: " + str(self.score), 7)
-            p.text(40, 140, "Press ESC to exit", 7)
+            p.text(self.x_personnage + self.taille_img // 2, self.height // 2 - self.height // 4, "GAME OVER", 7)
+            p.text(self.x_personnage + self.taille_img // 2, self.height // 2 - self.height // 4 + self.taille_img, "Score: " + str(self.score), 7)
+            p.text(self.x_personnage - self.taille_img // 4, self.height // 2 - self.height // 4 + self.taille_img * 2, "Press ESC to exit", 7)
 
             # Affiche le paradis
-            p.rect(0, 192, 128, 40, 11)
-            p.blt(self.x_origine_tronc - 8, self.y_origine_tronc + 16, self.img, 16, 48, self.taille_img * 2, self.taille_img)
-            p.blt(128 // 2 - self.taille_img // 2, 176, self.img, 0, 128, self.taille_img, self.taille_img, self.trans_font)
+            p.rect(0, self.height - self.taille_img * 3, self.width, self.taille_img * 3, 11)
+            p.blt(self.x_origine_tronc - self.taille_img // 2, self.y_origine_tronc + self.taille_img, self.img, 16, 48, self.taille_img * 2, self.taille_img)
+            p.blt(self.x_origine_tronc, self.y_origine_tronc, self.img, 0, 128, self.taille_img, self.taille_img, self.trans_font)
+            if self.animation_repos == "Gauche":
+                p.blt(self.x_personnage, self.y_personnage, self.img, 48, 112, self.taille_img, self.taille_img, 6)
+            elif self.animation_repos == "Droite":
+                p.blt(self.x_personnage + self.taille_img * 2, self.y_personnage, self.img, 48, 112, self.taille_img, self.taille_img, 6)
 
             self.file_tronc = list()
             p.show()
@@ -149,9 +152,9 @@ class Main:
         else:
             # Affiche le personnage dans la dernière image de l'animation
             if self.animation_repos == "Gauche":
-                p.blt(self.x_personnage, self.y_personnage, self.img, 48, 16, self.taille_img, self.taille_img)
+                p.blt(self.x_personnage, self.y_personnage, self.img, 48, 16, self.taille_img, self.taille_img, 6)
             elif self.animation_repos == "Droite":
-                p.blt(self.x_personnage + 32, self.y_personnage, self.img, 48, 32, self.taille_img, self.taille_img)
+                p.blt(self.x_personnage + self.taille_img * 2, self.y_personnage, self.img, 48, 32, self.taille_img, self.taille_img, 6)
 
     def animation_personnage(self, direction):
         """Gère les différentes étapes de l'animation du personnage."""
@@ -162,21 +165,21 @@ class Main:
 
         if direction == "Gauche":
             if self.animation_image == 0:
-                p.blt(self.x_personnage, self.y_personnage, self.img, 48, 48, self.taille_img, self.taille_img)
+                p.blt(self.x_personnage, self.y_personnage, self.img, 48, 48, self.taille_img, self.taille_img, 6)
             elif self.animation_image == 1:
-                p.blt(self.x_personnage, self.y_personnage, self.img, 48, 80, self.taille_img, self.taille_img)
+                p.blt(self.x_personnage, self.y_personnage, self.img, 48, 80, self.taille_img, self.taille_img, 6)
             elif self.animation_image == 2:
-                p.blt(self.x_personnage, self.y_personnage, self.img, 48, 16, self.taille_img, self.taille_img)
+                p.blt(self.x_personnage, self.y_personnage, self.img, 48, 16, self.taille_img, self.taille_img, 6)
                 self.animation_direction = None
                 self.animation_image = 0
             self.animation_repos = "Gauche"
         elif direction == "Droite":
             if self.animation_image == 0:
-                p.blt(self.x_personnage + self.taille_img * 2, self.y_personnage, self.img, 48, 64, self.taille_img, self.taille_img)
+                p.blt(self.x_personnage + self.taille_img * 2, self.y_personnage, self.img, 48, 64, self.taille_img, self.taille_img, 6)
             elif self.animation_image == 1:
-                p.blt(self.x_personnage + self.taille_img * 2, self.y_personnage, self.img, 48, 96, self.taille_img, self.taille_img)
+                p.blt(self.x_personnage + self.taille_img * 2, self.y_personnage, self.img, 48, 96, self.taille_img, self.taille_img, 6)
             elif self.animation_image == 2:
-                p.blt(self.x_personnage + self.taille_img * 2, self.y_personnage, self.img, 48, 32, self.taille_img, self.taille_img)
+                p.blt(self.x_personnage + self.taille_img * 2, self.y_personnage, self.img, 48, 32, self.taille_img, self.taille_img, 6)
                 self.animation_direction = None
                 self.animation_image = 0
             self.animation_repos = "Droite"
