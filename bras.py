@@ -17,6 +17,10 @@ class Main:
         self.taille_img = 16
         self.trans_font = 6
 
+        self.liste_nuages = [[60, 40, 96], [50, 15, 112], [15, 35, 112], [-10, 20, 96]]
+        self.dir = 1
+        self.time = 0
+
         # Position initiale du personnage
         self.x_personnage = self.width // 2 - self.taille_img - self.taille_img // 2
         self.y_personnage = self.height // 2 + self.height // 4
@@ -198,12 +202,32 @@ class Main:
         """Met à jour l'état du jeu (à implémenter)."""
         self.ajoute_tronc()
 
+        self.time += 1
+
+        if self.liste_nuages[0][0] < 40 or self.liste_nuages[0][0] > 80:
+            self.dir = - self.dir
+            for nuage in self.liste_nuages:
+                pass
+
+
+        if self.time % 5 == 0:
+            for nuage in self.liste_nuages:
+                nuage[0] -= 2
+                nuage[1] += self.dir
+                if nuage[0] < - 25:
+                    nuage[0] = 95
+
+
     def draw(self):
         """Dessine tous les éléments du jeu à chaque frame."""
         p.cls(self.trans_font)
         p.rect(0, self.height - self.taille_img * 3, self.width, self.taille_img * 3, 11)
         p.blt(self.x_origine_tronc - self.taille_img // 2, self.y_origine_tronc + self.taille_img, self.img, 16, 48, self.taille_img * 2, self.taille_img)
         
+        
+        for nuage in self.liste_nuages:
+            p.blt(nuage[0], nuage[1], 0, 16, nuage[2], 32, 16, 6)
+
         self.affiche_tronc()
         self.affiche_branches()
         self.coupe_tronc()
@@ -213,6 +237,7 @@ class Main:
         p.text(self.width // 9 - self.taille_img // 4, self.taille_img // 2 - self.taille_img // 8, str(self.score), 0)
         for vie in range(self.nb_vies):
             p.blt(self.width - self.taille_img - vie * 14, 1, self.img, 0, 0, self.taille_img, self.taille_img, self.trans_font)
+
 
 # Démarrage du jeu
 Main()
