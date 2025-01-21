@@ -129,12 +129,24 @@ class Main:
         """Affiche l'écran de fin de jeu avec les animations et les messages."""
         while True:
             p.cls(self.trans_font)
-            p.text(self.x_personnage + self.taille_img // 2, self.height // 2 - self.height // 4, "GAME OVER", 0)
-            p.text(self.x_personnage + self.taille_img // 2, self.height // 2 - self.height // 4 + self.taille_img, "Score: " + str(self.score), 0)
-            p.text(self.x_personnage - self.taille_img // 4, self.height // 2 - self.height // 4 + self.taille_img * 2, "Press ESC to exit", 0)
+            p.rect(0, self.height - self.taille_img * 3, self.width, self.taille_img * 3, 11)
+
+            p.rect(0, self.height - self.taille_img * 3 - 48, self.width, self.taille_img * 3, 7)
+
+            for k in range(self.width // 16 + 1):
+                p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 12)
+
+            for k in range(6):
+                p.blt(k * 20 - 5, 100, 0, 38, 128, 25, 32, 6)
+
+            for nuage in self.liste_nuages:
+                p.blt(nuage[0], nuage[1], 0, 16, nuage[2], 32, 16, 6)
+
+            p.text(self.x_personnage + self.taille_img // 2, self.height // 2 - self.height // 4 - 10, "GAME OVER", 0)
+            p.text(self.x_personnage + self.taille_img // 2, self.height // 2 - self.height // 4 - 10 + self.taille_img, "Score: " + str(self.score), 0)
+            p.text(self.x_personnage - self.taille_img // 4, self.height // 2 - self.height // 4 - 10 + self.taille_img * 2, "Press ESC to exit", 0)
 
             # Affiche le paradis
-            p.rect(0, self.height - self.taille_img * 3, self.width, self.taille_img * 3, 11)
             p.blt(self.x_origine_tronc - self.taille_img // 2, self.y_origine_tronc + self.taille_img, self.img, 16, 48, self.taille_img * 2, self.taille_img)
             p.blt(self.x_origine_tronc, self.y_origine_tronc, self.img, 0, 128, self.taille_img, self.taille_img, self.trans_font)
             if self.animation_repos == "Gauche":
@@ -221,6 +233,11 @@ class Main:
     def draw(self):
         """Dessine tous les éléments du jeu à chaque frame."""
         p.cls(self.trans_font)
+        p.rect(0, self.height - self.taille_img * 3 - 48, self.width, self.taille_img * 3, 7)
+
+        for k in range(self.width // 16 + 1):
+            p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 12)
+
         p.rect(0, self.height - self.taille_img * 3, self.width, self.taille_img * 3, 11)
         p.blt(self.x_origine_tronc - self.taille_img // 2, self.y_origine_tronc + self.taille_img, self.img, 16, 48, self.taille_img * 2, self.taille_img)
         
@@ -228,8 +245,8 @@ class Main:
         for nuage in self.liste_nuages:
             p.blt(nuage[0], nuage[1], 0, 16, nuage[2], 32, 16, 6)
 
-        for k in range(5):
-            p.blt(k * 20, 100, 0, 40, 128, 24, 32, 6)
+        for k in range(6):
+            p.blt(k * 20 - 5, 100, 0, 38, 128, 25, 32, 6)
 
         self.affiche_tronc()
         self.affiche_branches()
