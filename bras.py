@@ -204,7 +204,7 @@ class Main:
 
         self.time += 1
 
-        if self.liste_nuages[0][0] < 40 or self.liste_nuages[0][0] > 80:
+        if self.liste_nuages[0][0] == 10 or self.liste_nuages[0][0] == 80:
             self.dir = - self.dir
             for nuage in self.liste_nuages:
                 pass
@@ -227,6 +227,9 @@ class Main:
         
         for nuage in self.liste_nuages:
             p.blt(nuage[0], nuage[1], 0, 16, nuage[2], 32, 16, 6)
+
+        for k in range(5):
+            p.blt(k * 20, 100, 0, 40, 128, 24, 32, 6)
 
         self.affiche_tronc()
         self.affiche_branches()
