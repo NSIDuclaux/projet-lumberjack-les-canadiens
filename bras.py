@@ -134,13 +134,18 @@ class Main:
             p.rect(0, self.height - self.taille_img * 3 - 48, self.width, self.taille_img * 3, 7)
 
             for k in range(self.width // 16 + 1):
-                p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 12)
+                p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 8)
 
             for k in range(6):
                 p.blt(k * 20 - 5, 100, 0, 38, 128, 25, 32, 6)
 
             for nuage in self.liste_nuages:
                 p.blt(nuage[0], nuage[1], 0, 16, nuage[2], 32, 16, 6)
+
+            p.blt(10, 150, 0, 0, 160, 8, 12, 0)
+            p.blt(30, 160, 0, 8, 160, 3, 12, 0)
+            p.blt(70, 165, 0, 11, 160, 8, 12, 0)
+            p.blt(80, 140, 0, 19, 160, 8, 12, 0)
 
             p.text(self.x_personnage + self.taille_img // 2, self.height // 2 - self.height // 4 - 10, "GAME OVER", 0)
             p.text(self.x_personnage + self.taille_img // 2, self.height // 2 - self.height // 4 - 10 + self.taille_img, "Score: " + str(self.score), 0)
@@ -216,10 +221,8 @@ class Main:
 
         self.time += 1
 
-        if self.liste_nuages[0][0] == 10 or self.liste_nuages[0][0] == 80:
+        if self.liste_nuages[0][1] < 30 or self.liste_nuages[0][1] > 60:
             self.dir = - self.dir
-            for nuage in self.liste_nuages:
-                pass
 
 
         if self.time % 5 == 0:
@@ -236,17 +239,21 @@ class Main:
         p.rect(0, self.height - self.taille_img * 3 - 48, self.width, self.taille_img * 3, 7)
 
         for k in range(self.width // 16 + 1):
-            p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 12)
+            p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 8)
 
         p.rect(0, self.height - self.taille_img * 3, self.width, self.taille_img * 3, 11)
         p.blt(self.x_origine_tronc - self.taille_img // 2, self.y_origine_tronc + self.taille_img, self.img, 16, 48, self.taille_img * 2, self.taille_img)
-        
         
         for nuage in self.liste_nuages:
             p.blt(nuage[0], nuage[1], 0, 16, nuage[2], 32, 16, 6)
 
         for k in range(6):
             p.blt(k * 20 - 5, 100, 0, 38, 128, 25, 32, 6)
+
+        p.blt(10, 150, 0, 0, 160, 8, 12, 0)
+        p.blt(30, 160, 0, 8, 160, 3, 12, 0)
+        p.blt(70, 165, 0, 11, 160, 8, 12, 0)
+        p.blt(80, 140, 0, 19, 160, 8, 12, 0)
 
         self.affiche_tronc()
         self.affiche_branches()
