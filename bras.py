@@ -27,7 +27,7 @@ class Main:
 
         # Variables d'animation
         self.animation_image = 0
-        self.animation_vitesse = 5
+        self.animation_vitesse = 2
         self.animation_timer = 0
         self.animation_direction = None
         self.animation_repos = None
@@ -62,9 +62,9 @@ class Main:
 
     def ajoute_tronc(self):
         """Ajoute un nouveau tronc à la liste des troncs avec une probabilité d'ajouter une branche."""
-        if self.nb_vies > 0 and self.file_tronc[-1]["y"] > -999:
+        nb_tronc = len(self.file_tronc)    
+        if self.nb_vies > 0:    
             proba = randint(1, 3)
-            nb_tronc = len(self.file_tronc)
             if proba != 3:
                 self.file_tronc.append({
                     "x": self.x_origine_tronc,
@@ -83,6 +83,7 @@ class Main:
                     "droit": False,
                     "nb": nb_tronc
                                         })
+        
         if self.nb_vies > 0 and self.file_tronc[0]["y"] > self.y_origine_tronc - self.taille_img:
             self.file_tronc[0]["branche"] = False
 
