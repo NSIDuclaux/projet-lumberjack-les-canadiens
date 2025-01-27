@@ -58,7 +58,7 @@ class Main:
                                 })
 
         # Démarrage du jeu
-        p.play(0, 0, loop=True)
+        p.play(0, 1, loop=True)
         p.run(self.update, self.draw)
 
     def ajoute_tronc(self):
@@ -167,13 +167,13 @@ class Main:
     def coupe_tronc(self):
         """Gère l'animation du personnage lorsqu'il coupe un tronc."""
         if self.animation_direction is None:
-            if p.btn(p.KEY_LEFT):
+            if p.btnp(p.KEY_LEFT):
                 self.animation_direction = "Gauche"
                 self.animation_image = 0
                 self.animation_timer = 0
                 self.retirer_tronc()
                 self.collisions()
-            elif p.btn(p.KEY_RIGHT):
+            elif p.btnp(p.KEY_RIGHT):
                 self.animation_direction = "Droite"
                 self.animation_image = 0
                 self.animation_timer = 0
