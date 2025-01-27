@@ -1,6 +1,5 @@
 import pyxel as p
 from random import randint
-from vlc import *
 
 class Main:
     def __init__(self):
@@ -13,6 +12,7 @@ class Main:
         # Initialisation des variables de jeu
         self.score = 0
         self.nb_vies = 3
+        self.start_perso_point_d_interogation = True
 
         self.img = 0
         self.taille_img = 16
@@ -59,7 +59,6 @@ class Main:
                                 })
 
         # Démarrage du jeu
-        p.play(0, 0, loop=True)
         p.run(self.update, self.draw)
 
     def ajoute_tronc(self):
@@ -180,6 +179,7 @@ class Main:
                 self.animation_timer = 0
                 self.retirer_tronc()
                 self.collisions()
+                self.start_perso_point_d_interogation = False
 
         if self.animation_direction is not None:
             self.animation_personnage(self.animation_direction)
@@ -236,7 +236,7 @@ class Main:
                     nuage[0] = 95
         
         if p.btnp(p.KEY_LEFT) or p.btnp(p.KEY_RIGHT):
-            son = MediaPlayer(str(randint(1,4))+".mp3")
+            son= MediaPlayer(str(randint(1,4))+".mp3")
             son.play()
 
             
@@ -265,6 +265,7 @@ class Main:
         p.blt(80, 140, 0, 19, 160, 8, 12, 0)
 
         self.affiche_tronc()
+
         self.affiche_branches()
         self.coupe_tronc()
 
@@ -274,6 +275,8 @@ class Main:
         for vie in range(self.nb_vies):
             p.blt(self.width - self.taille_img - vie * 14, 1, self.img, 0, 0, self.taille_img, self.taille_img, self.trans_font)
 
+        if self.start_perso_point_d_interogation:
+            p.blt(self.x_personnage, self.y_personnage, self.img, 48, 48, self.taille_img, self.taille_img, self.trans_font)
 
 # Démarrage du jeu
 Main()
