@@ -34,6 +34,7 @@ class Main:
         self.animation_timer = 0
         self.animation_direction = None
         self.animation_repos = None
+    
 
 
         
@@ -111,10 +112,12 @@ class Main:
         for tronc in self.file_tronc:
             tronc["y"] += self.taille_img
 
-    def collisions(self):    
+    def collisions(self):
         if self.file_tronc[1]["branche"]:
+            self.ouille = MediaPlayer("Ouille.mp3")
             if (not self.file_tronc[1]["droit"] and not self.animation_direction == "Gauche") or (self.file_tronc[1]["droit"] and not self.animation_direction == "Droite"):
                 self.nb_vies -= 1
+                self.ouille.play()
                 if self.animation_repos == "Gauche":
                     for _ in range(15):
                         p.blt(self.x_personnage, self.y_personnage, self.img, 48, 112, self.taille_img, self.taille_img, 6)
