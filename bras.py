@@ -1,5 +1,6 @@
 import pyxel as p
 from random import randint
+from playsound import playsound
 
 class Main:
     def __init__(self):
@@ -58,7 +59,7 @@ class Main:
                                 })
 
         # Démarrage du jeu
-        p.play(0, 1, loop=True)
+        p.play(0, 0, loop=True)
         p.run(self.update, self.draw)
 
     def ajoute_tronc(self):
@@ -233,6 +234,10 @@ class Main:
                 nuage[1] += self.dir
                 if nuage[0] < - 25:
                     nuage[0] = 95
+        
+        """if p.btnp(p.KEY_LEFT) or p.btnp(p.KEY_RIGHT):
+            playsound(str(randint(1,4))+".mp3")"""
+            
 
 
     def draw(self):
