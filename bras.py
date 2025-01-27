@@ -168,13 +168,13 @@ class Main:
     def coupe_tronc(self):
         """Gère l'animation du personnage lorsqu'il coupe un tronc."""
         if self.animation_direction is None:
-            if p.btn(p.KEY_LEFT):
+            if p.btnp(p.KEY_LEFT):
                 self.animation_direction = "Gauche"
                 self.animation_image = 0
                 self.animation_timer = 0
                 self.retirer_tronc()
                 self.collisions()
-            elif p.btn(p.KEY_RIGHT):
+            elif p.btnp(p.KEY_RIGHT):
                 self.animation_direction = "Droite"
                 self.animation_image = 0
                 self.animation_timer = 0
@@ -236,7 +236,7 @@ class Main:
                     nuage[0] = 95
         
         if p.btnp(p.KEY_LEFT) or p.btnp(p.KEY_RIGHT):
-            son= MediaPlayer(str(randint(1,4))+".mp3")
+            son = MediaPlayer(str(randint(1,4))+".mp3")
             son.play()
 
             
