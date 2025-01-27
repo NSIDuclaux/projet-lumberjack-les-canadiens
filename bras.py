@@ -1,5 +1,7 @@
 import pyxel as p
 from random import randint
+from vlc import *
+
 
 class Main:
     def __init__(self):
@@ -59,6 +61,7 @@ class Main:
                                 })
 
         # Démarrage du jeu
+        p.play(0, 0, loop=True)
         p.run(self.update, self.draw)
 
     def ajoute_tronc(self):
