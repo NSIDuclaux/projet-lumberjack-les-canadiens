@@ -1,5 +1,6 @@
 import pyxel as p
 from random import randint
+from vlc import *
 
 class Main:
     def __init__(self):
@@ -59,6 +60,7 @@ class Main:
                                 })
 
         # Démarrage du jeu
+        p.play(0, 0, loop=True)
         p.run(self.update, self.draw)
 
     def ajoute_tronc(self):
@@ -167,14 +169,12 @@ class Main:
     def coupe_tronc(self):
         """Gère l'animation du personnage lorsqu'il coupe un tronc."""
         if self.animation_direction is None:
-            if p.btnp(p.KEY_LEFT):
+            if p.btn(p.KEY_LEFT):
                 self.animation_direction = "Gauche"
                 self.animation_image = 0
                 self.animation_timer = 0
                 self.retirer_tronc()
                 self.collisions()
-                self.start_perso_point_d_interogation = False
-
             elif p.btnp(p.KEY_RIGHT):
                 self.animation_direction = "Droite"
                 self.animation_image = 0
@@ -236,6 +236,12 @@ class Main:
                 nuage[1] += self.dir
                 if nuage[0] < - 25:
                     nuage[0] = 95
+        
+        if p.btnp(p.KEY_LEFT) or p.btnp(p.KEY_RIGHT):
+            son= MediaPlayer(str(randint(1,4))+".mp3")
+            son.play()
+
+            
 
 
     def draw(self):
