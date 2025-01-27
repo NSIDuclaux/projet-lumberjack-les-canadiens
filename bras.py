@@ -59,7 +59,10 @@ class Main:
                                 })
 
         # Démarrage du jeu
+<<<<<<< HEAD
         p.play(0, 0, loop=True)
+=======
+>>>>>>> ce7d86d78eb0a5d0cd971fb410869ef8f87b3617
         p.run(self.update, self.draw)
 
     def ajoute_tronc(self):
