@@ -1,6 +1,5 @@
 import pyxel as p
 from random import randint
-from vlc import *
 
 class Main:
     def __init__(self):
@@ -60,7 +59,6 @@ class Main:
                                 })
 
         # Démarrage du jeu
-        p.play(0, 0, loop=True)
         p.run(self.update, self.draw)
 
     def ajoute_tronc(self):
@@ -169,12 +167,14 @@ class Main:
     def coupe_tronc(self):
         """Gère l'animation du personnage lorsqu'il coupe un tronc."""
         if self.animation_direction is None:
-            if p.btn(p.KEY_LEFT):
+            if p.btnp(p.KEY_LEFT):
                 self.animation_direction = "Gauche"
                 self.animation_image = 0
                 self.animation_timer = 0
                 self.retirer_tronc()
                 self.collisions()
+                self.start_perso_point_d_interogation = False
+
             elif p.btnp(p.KEY_RIGHT):
                 self.animation_direction = "Droite"
                 self.animation_image = 0
@@ -236,12 +236,6 @@ class Main:
                 nuage[1] += self.dir
                 if nuage[0] < - 25:
                     nuage[0] = 95
-        
-        if p.btnp(p.KEY_LEFT) or p.btnp(p.KEY_RIGHT):
-            son= MediaPlayer(str(randint(1,4))+".mp3")
-            son.play()
-
-            
 
 
     def draw(self):
@@ -278,7 +272,7 @@ class Main:
             p.blt(self.width - self.taille_img - vie * 14, 1, self.img, 0, 0, self.taille_img, self.taille_img, self.trans_font)
 
         if self.start_perso_point_d_interogation:
-            p.blt(self.x_personnage + self.taille_img * 2, self.y_personnage, self.img, 48, 32, self.taille_img, self.taille_img, 6)
+            p.blt(self.x_personnage, self.y_personnage, self.img, 48, 48, self.taille_img, self.taille_img, self.trans_font)
 
 # Démarrage du jeu
 Main()
