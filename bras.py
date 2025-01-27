@@ -58,7 +58,6 @@ class Main:
                                 })
 
         # Démarrage du jeu
-        p.play(0, 1, loop=True)
         p.run(self.update, self.draw)
 
     def ajoute_tronc(self):
