@@ -140,6 +140,7 @@ class Main:
             p.rect(0, self.height - self.taille_img * 3, self.width, self.taille_img * 3, 11)
 
             p.rect(0, self.height - self.taille_img * 3 - 48, self.width, self.taille_img * 3, 7)
+            p.blt(- 4,self.height - self.taille_img * 3 - 45, 0, 0, 184, 105, 45, 6)
 
             for k in range(self.width // 16 + 1):
                 p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 8)
@@ -269,6 +270,8 @@ class Main:
             for nuage in self.liste_nuages:
                 p.blt(nuage[0], nuage[1], 0, 16, nuage[2], 32, 16, 6)
 
+            p.blt(- 4,self.height - self.taille_img * 3 - 45, 0, 0, 184, 105, 45, 6)
+
             for k in range(6):
                 p.blt(k * 20 - 5, 100, 0, 38, 128, 25, 32, 6)
 
@@ -294,6 +297,8 @@ class Main:
             for nuage in self.liste_nuages:
                 p.blt(nuage[0], nuage[1], 0, 16, nuage[2], 32, 16, 6)
 
+            p.blt(- 4,self.height - self.taille_img * 3 - 45, 0, 0, 184, 105, 45, 6)
+
             for k in range(6):
                 p.blt(k * 20 - 5, 100, 0, 38, 128, 25, 32, 6)
 
@@ -318,4 +323,3 @@ class Main:
 
 # Démarrage du jeu
 Main()
-# Démarrage du jeu
