@@ -1,6 +1,6 @@
 import pyxel as p
 from random import randint
-from vlc import *
+from vlc import MediaPlayer
 
 
 class Main:
