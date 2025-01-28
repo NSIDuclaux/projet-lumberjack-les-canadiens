@@ -1,10 +1,7 @@
 import pyxel as p
 from random import randint
-<<<<<<< HEAD
-=======
 from vlc import MediaPlayer
 
->>>>>>> 86a0cee08be6112a1fff3d52251a4594c03a3768
 
 class Main:
     def __init__(self):
