@@ -62,6 +62,7 @@ class Main:
                                 })
 
         # Démarrage du jeu
+        p.play(0, 0, loop=True)
         p.run(self.update, self.draw)
 
     def ajoute_tronc(self):
@@ -113,8 +114,10 @@ class Main:
 
     def collisions(self):    
         if self.file_tronc[1]["branche"]:
+            self.ouille = MediaPlayer("Ouille.mp3")
             if (not self.file_tronc[1]["droit"] and not self.animation_direction == "Gauche") or (self.file_tronc[1]["droit"] and not self.animation_direction == "Droite"):
                 self.nb_vies -= 1
+                self.ouille.play()
                 if self.animation_repos == "Gauche":
                     for _ in range(15):
                         p.blt(self.x_personnage, self.y_personnage, self.img, 48, 112, self.taille_img, self.taille_img, 6)
@@ -244,6 +247,9 @@ class Main:
         if p.btn(p.MOUSE_BUTTON_LEFT):
             self.start_page = False
 
+        if p.btnp(p.KEY_LEFT) or p.btnp(p.KEY_RIGHT):
+            hache = MediaPlayer(str(randint(1,4))+".mp3")
+            hache.play()
 
     def draw(self):
         """Dessine tous les éléments du jeu à chaque frame."""
