@@ -1,7 +1,5 @@
 import pyxel as p
 from random import randint
-from vlc import *
-
 
 class Main:
     def __init__(self):
@@ -23,6 +21,7 @@ class Main:
         self.liste_nuages = [[60, 40, 96], [50, 15, 112], [15, 35, 112], [-10, 20, 96]]
         self.dir = 1
         self.time = 0
+        self.start_page = True
 
         # Position initiale du personnage
         self.x_personnage = self.width // 2 - self.taille_img - self.taille_img // 2
@@ -34,7 +33,6 @@ class Main:
         self.animation_timer = 0
         self.animation_direction = None
         self.animation_repos = None
-    
 
 
         
@@ -62,7 +60,6 @@ class Main:
                                 })
 
         # Démarrage du jeu
-        p.play(0, 0, loop=True)
         p.run(self.update, self.draw)
 
     def ajoute_tronc(self):
@@ -112,12 +109,10 @@ class Main:
         for tronc in self.file_tronc:
             tronc["y"] += self.taille_img
 
-    def collisions(self):
+    def collisions(self):    
         if self.file_tronc[1]["branche"]:
-            self.ouille = MediaPlayer("Ouille.mp3")
             if (not self.file_tronc[1]["droit"] and not self.animation_direction == "Gauche") or (self.file_tronc[1]["droit"] and not self.animation_direction == "Droite"):
                 self.nb_vies -= 1
-                self.ouille.play()
                 if self.animation_repos == "Gauche":
                     for _ in range(15):
                         p.blt(self.x_personnage, self.y_personnage, self.img, 48, 112, self.taille_img, self.taille_img, 6)
@@ -179,6 +174,8 @@ class Main:
                 self.animation_timer = 0
                 self.retirer_tronc()
                 self.collisions()
+                self.start_perso_point_d_interogation = False
+
             elif p.btnp(p.KEY_RIGHT):
                 self.animation_direction = "Droite"
                 self.animation_image = 0
@@ -224,6 +221,7 @@ class Main:
                 self.animation_image = 0
             self.animation_repos = "Droite"
 
+
     def update(self):
         """Met à jour l'état du jeu (à implémenter)."""
         self.ajoute_tronc()
@@ -240,49 +238,76 @@ class Main:
                 nuage[1] += self.dir
                 if nuage[0] < - 25:
                     nuage[0] = 95
-        
-        if p.btnp(p.KEY_LEFT) or p.btnp(p.KEY_RIGHT):
-            son= MediaPlayer(str(randint(1,4))+".mp3")
-            son.play()
 
-            
+        if p.btn(p.MOUSE_BUTTON_LEFT):
+            self.start_page = False
 
 
     def draw(self):
         """Dessine tous les éléments du jeu à chaque frame."""
         p.cls(self.trans_font)
-        p.rect(0, self.height - self.taille_img * 3 - 48, self.width, self.taille_img * 3, 7)
 
-        for k in range(self.width // 16 + 1):
-            p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 8)
+        if self.start_page:
+            p.mouse(True)
+            p.rect(0, self.height - self.taille_img * 3 - 48, self.width, self.taille_img * 3, 7)
 
-        p.rect(0, self.height - self.taille_img * 3, self.width, self.taille_img * 3, 11)
-        p.blt(self.x_origine_tronc - self.taille_img // 2, self.y_origine_tronc + self.taille_img, self.img, 16, 48, self.taille_img * 2, self.taille_img)
+            for k in range(self.width // 16 + 1):
+                p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 8)
+
+            p.rect(0, self.height - self.taille_img * 3, self.width, self.taille_img * 3, 11)
+            p.blt(self.x_origine_tronc - self.taille_img // 2, self.y_origine_tronc + self.taille_img, self.img, 16, 48, self.taille_img * 2, self.taille_img)
+            p.blt(self.x_origine_tronc - self.taille_img // 2 + 8, self.y_origine_tronc + self.taille_img - 16, 0, 0, 128, 16, 16, 6)
+
+            for nuage in self.liste_nuages:
+                p.blt(nuage[0], nuage[1], 0, 16, nuage[2], 32, 16, 6)
+
+            for k in range(6):
+                p.blt(k * 20 - 5, 100, 0, 38, 128, 25, 32, 6)
+
+            p.blt(10, 150, 0, 0, 160, 8, 12, 0)
+            p.blt(30, 160, 0, 8, 160, 3, 12, 0)
+            p.blt(70, 165, 0, 11, 160, 8, 12, 0)
+            p.blt(80, 140, 0, 19, 160, 8, 12, 0)
+
+
+            p.text(self.x_personnage + self.taille_img // 2 - 13, self.height // 2 - 40, "LUMBERJACK GAME", 0)
+            p.text(self.x_personnage + self.taille_img // 2 - 10, self.height // 2 - 20, "CLICK TO START", 0)
+
+        else:
+            p.mouse(False)
+            p.rect(0, self.height - self.taille_img * 3 - 48, self.width, self.taille_img * 3, 7)
+
+            for k in range(self.width // 16 + 1):
+                p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 8)
+
+            p.rect(0, self.height - self.taille_img * 3, self.width, self.taille_img * 3, 11)
+            p.blt(self.x_origine_tronc - self.taille_img // 2, self.y_origine_tronc + self.taille_img, self.img, 16, 48, self.taille_img * 2, self.taille_img)
         
-        for nuage in self.liste_nuages:
-            p.blt(nuage[0], nuage[1], 0, 16, nuage[2], 32, 16, 6)
+            for nuage in self.liste_nuages:
+                p.blt(nuage[0], nuage[1], 0, 16, nuage[2], 32, 16, 6)
 
-        for k in range(6):
-            p.blt(k * 20 - 5, 100, 0, 38, 128, 25, 32, 6)
+            for k in range(6):
+                p.blt(k * 20 - 5, 100, 0, 38, 128, 25, 32, 6)
 
-        p.blt(10, 150, 0, 0, 160, 8, 12, 0)
-        p.blt(30, 160, 0, 8, 160, 3, 12, 0)
-        p.blt(70, 165, 0, 11, 160, 8, 12, 0)
-        p.blt(80, 140, 0, 19, 160, 8, 12, 0)
+            p.blt(10, 150, 0, 0, 160, 8, 12, 0)
+            p.blt(30, 160, 0, 8, 160, 3, 12, 0)
+            p.blt(70, 165, 0, 11, 160, 8, 12, 0)
+            p.blt(80, 140, 0, 19, 160, 8, 12, 0)
 
-        self.affiche_tronc()
+            self.affiche_tronc()
 
-        self.affiche_branches()
-        self.coupe_tronc()
+            self.affiche_branches()
+            self.coupe_tronc()
 
-        # Affichage du score et des vies
-        p.blt(0, 1, self.img, 16, 0, self.taille_img * 2 , self.taille_img, self.trans_font)
-        p.text(self.width // 9 - self.taille_img // 4, self.taille_img // 2 - self.taille_img // 8, str(self.score), 0)
-        for vie in range(self.nb_vies):
-            p.blt(self.width - self.taille_img - vie * 14, 1, self.img, 0, 0, self.taille_img, self.taille_img, self.trans_font)
+            # Affichage du score et des vies
+            p.blt(0, 1, self.img, 16, 0, self.taille_img * 2 , self.taille_img, self.trans_font)
+            p.text(self.width // 9 - self.taille_img // 4, self.taille_img // 2 - self.taille_img // 8, str(self.score), 0)
+            for vie in range(self.nb_vies):
+                p.blt(self.width - self.taille_img - vie * 14, 1, self.img, 0, 0, self.taille_img, self.taille_img, self.trans_font)
 
-        if self.start_perso_point_d_interogation:
-            p.blt(self.x_personnage, self.y_personnage, self.img, 48, 48, self.taille_img, self.taille_img, self.trans_font)
+            if self.start_perso_point_d_interogation:
+                p.blt(self.x_personnage, self.y_personnage, self.img, 48, 48, self.taille_img, self.taille_img, self.trans_font)
 
 # Démarrage du jeu
 Main()
+# Démarrage du jeu
