@@ -24,6 +24,7 @@ class Main:
         self.dir = 1
         self.time = 0
         self.start_page = True
+        self.state_sound = False
 
         # Position initiale du personnage
         self.x_personnage = self.width // 2 - self.taille_img - self.taille_img // 2
@@ -62,7 +63,8 @@ class Main:
                                 })
 
         # Démarrage du jeu
-        p.play(0, 0, loop=True)
+        if self.state_sound:
+            p.play(0, 0, loop=True)
         p.run(self.update, self.draw)
 
     def ajoute_tronc(self):
@@ -117,7 +119,8 @@ class Main:
             self.ouille = MediaPlayer("Ouille.mp3")
             if (not self.file_tronc[1]["droit"] and not self.animation_direction == "Gauche") or (self.file_tronc[1]["droit"] and not self.animation_direction == "Droite"):
                 self.nb_vies -= 1
-                self.ouille.play()
+                if self.state_sound:
+                    self.ouille.play()
                 if self.animation_repos == "Gauche":
                     for _ in range(15):
                         p.blt(self.x_personnage, self.y_personnage, self.img, 48, 112, self.taille_img, self.taille_img, 6)
@@ -248,9 +251,10 @@ class Main:
         if p.btn(p.MOUSE_BUTTON_LEFT):
             self.start_page = False
 
-        if p.btnp(p.KEY_LEFT) or p.btnp(p.KEY_RIGHT):
-            hache = MediaPlayer(str(randint(1,4))+".mp3")
-            hache.play()
+        if self.state_sound:
+            if p.btnp(p.KEY_LEFT) or p.btnp(p.KEY_RIGHT):
+                hache = MediaPlayer(str(randint(1,4))+".mp3")
+                hache.play()
 
     def draw(self):
         """Dessine tous les éléments du jeu à chaque frame."""
@@ -282,6 +286,7 @@ class Main:
 
 
             p.text(self.x_personnage + self.taille_img // 2 - 13, self.height // 2 - 40, "LUMBERJACK GAME", 0)
+            p.rectb(self.x_personnage + self.taille_img // 2 - 17, self.height // 2 - 46, 67, 17, 0)
             p.text(self.x_personnage + self.taille_img // 2 - 10, self.height // 2 - 20, "CLICK TO START", 0)
 
         else:
