@@ -9,7 +9,7 @@ class Main:
         self.width = 99
         self.height = 176
         p.init(self.width, self.height, title='LumberJackGame', quit_key=p.KEY_ESCAPE, fps=30)
-        p.load("res.pyxres")
+        p.load("res.pyxres", False, False, False, False)
 
         # Initialisation des variables de jeu
         self.score = 0
@@ -24,7 +24,7 @@ class Main:
         self.dir = 1
         self.time = 0
         self.start_page = True
-        self.state_sound = False
+        self.state_sound = True
 
         # Position initiale du personnage
         self.x_personnage = self.width // 2 - self.taille_img - self.taille_img // 2
@@ -171,6 +171,11 @@ class Main:
             elif self.animation_repos == "Droite":
                 p.blt(self.x_personnage + self.taille_img * 2, self.y_personnage, self.img, 48, 112, self.taille_img, self.taille_img, 6)
 
+            if self.state_sound:
+                p.blt(80, 160, 0, 0, 240, 16, 16, 6)
+            else:
+                p.blt(80, 160, 0, 16, 240, 16, 16, 6)
+
             self.file_tronc = list()
             p.show()
 
@@ -256,6 +261,15 @@ class Main:
                 hache = MediaPlayer(str(randint(1,4))+".mp3")
                 hache.play()
 
+        if p.btnp(p.KEY_M):
+            if self.state_sound:
+                self.posi_sound = p.play_pos(1)
+                p.stop(self.posi_sound)
+            else:
+                p.play(0, 0, loop=True)
+            self.state_sound = not self.state_sound
+
+
     def draw(self):
         """Dessine tous les éléments du jeu à chaque frame."""
         p.cls(self.trans_font)
@@ -288,6 +302,11 @@ class Main:
             p.text(self.x_personnage + self.taille_img // 2 - 13, self.height // 2 - 40, "LUMBERJACK GAME", 0)
             p.rectb(self.x_personnage + self.taille_img // 2 - 17, self.height // 2 - 46, 67, 17, 0)
             p.text(self.x_personnage + self.taille_img // 2 - 10, self.height // 2 - 20, "CLICK TO START", 0)
+
+            if self.state_sound:
+                p.blt(80, 160, 0, 0, 240, 16, 16, 6)
+            else:
+                p.blt(80, 160, 0, 16, 240, 16, 16, 6)
 
         else:
             p.mouse(False)
@@ -325,6 +344,11 @@ class Main:
 
             if self.start_perso_point_d_interogation:
                 p.blt(self.x_personnage, self.y_personnage, self.img, 48, 48, self.taille_img, self.taille_img, self.trans_font)
+
+            if self.state_sound:
+                p.blt(80, 160, 0, 0, 240, 16, 16, 6)
+            else:
+                p.blt(80, 160, 0, 16, 240, 16, 16, 6)
 
 # Démarrage du jeu
 Main()
