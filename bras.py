@@ -257,7 +257,7 @@ class Main:
 
         if self.state_sound:
             if p.btnp(p.KEY_LEFT) or p.btnp(p.KEY_RIGHT):
-                play(randint(1,4)+".mp3",async_mode=True)
+                play(str(randint(1,4))+".mp3",async_mode=True)
 
         if p.btnp(p.KEY_M):
             if self.state_sound:
