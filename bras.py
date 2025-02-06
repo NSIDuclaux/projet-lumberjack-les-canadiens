@@ -9,7 +9,7 @@ class Main:
         self.width = 99
         self.height = 176
         p.init(self.width, self.height, title='LumberJackGame', quit_key=p.KEY_ESCAPE, fps=30)
-        p.load("res.pyxres")
+        p.load("res.pyxres", False, False, False, False)
 
         # Initialisation des variables de jeu
         self.score = 0
@@ -24,6 +24,7 @@ class Main:
         self.dir = 1
         self.time = 0
         self.start_page = True
+        self.state_sound = True
 
         # Position initiale du personnage
         self.x_personnage = self.width // 2 - self.taille_img - self.taille_img // 2
@@ -62,7 +63,8 @@ class Main:
                                 })
 
         # Démarrage du jeu
-        p.play(0, 0, loop=True)
+        if self.state_sound:
+            p.play(0, 0, loop=True)
         p.run(self.update, self.draw)
 
     def ajoute_tronc(self):
@@ -117,7 +119,8 @@ class Main:
             self.ouille = MediaPlayer("Ouille.mp3")
             if (not self.file_tronc[1]["droit"] and not self.animation_direction == "Gauche") or (self.file_tronc[1]["droit"] and not self.animation_direction == "Droite"):
                 self.nb_vies -= 1
-                self.ouille.play()
+                if self.state_sound:
+                    self.ouille.play()
                 if self.animation_repos == "Gauche":
                     for _ in range(15):
                         p.blt(self.x_personnage, self.y_personnage, self.img, 48, 112, self.taille_img, self.taille_img, 6)
@@ -140,6 +143,7 @@ class Main:
             p.rect(0, self.height - self.taille_img * 3, self.width, self.taille_img * 3, 11)
 
             p.rect(0, self.height - self.taille_img * 3 - 48, self.width, self.taille_img * 3, 7)
+            p.blt(- 4,self.height - self.taille_img * 3 - 45, 0, 0, 184, 105, 45, 6)
 
             for k in range(self.width // 16 + 1):
                 p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 8)
@@ -166,6 +170,11 @@ class Main:
                 p.blt(self.x_personnage, self.y_personnage, self.img, 48, 112, self.taille_img, self.taille_img, 6)
             elif self.animation_repos == "Droite":
                 p.blt(self.x_personnage + self.taille_img * 2, self.y_personnage, self.img, 48, 112, self.taille_img, self.taille_img, 6)
+
+            if self.state_sound:
+                p.blt(80, 160, 0, 0, 240, 16, 16, 6)
+            else:
+                p.blt(80, 160, 0, 16, 240, 16, 16, 6)
 
             self.file_tronc = list()
             p.show()
@@ -247,9 +256,19 @@ class Main:
         if p.btn(p.MOUSE_BUTTON_LEFT):
             self.start_page = False
 
-        if p.btnp(p.KEY_LEFT) or p.btnp(p.KEY_RIGHT):
-            hache = MediaPlayer(str(randint(1,4))+".mp3")
-            hache.play()
+        if self.state_sound:
+            if p.btnp(p.KEY_LEFT) or p.btnp(p.KEY_RIGHT):
+                hache = MediaPlayer(str(randint(1,4))+".mp3")
+                hache.play()
+
+        if p.btnp(p.KEY_M):
+            if self.state_sound:
+                self.posi_sound = p.play_pos(1)
+                p.stop(self.posi_sound)
+            else:
+                p.play(0, 0, loop=True)
+            self.state_sound = not self.state_sound
+
 
     def draw(self):
         """Dessine tous les éléments du jeu à chaque frame."""
@@ -269,6 +288,8 @@ class Main:
             for nuage in self.liste_nuages:
                 p.blt(nuage[0], nuage[1], 0, 16, nuage[2], 32, 16, 6)
 
+            p.blt(- 4,self.height - self.taille_img * 3 - 45, 0, 0, 184, 105, 45, 6)
+
             for k in range(6):
                 p.blt(k * 20 - 5, 100, 0, 38, 128, 25, 32, 6)
 
@@ -279,7 +300,13 @@ class Main:
 
 
             p.text(self.x_personnage + self.taille_img // 2 - 13, self.height // 2 - 40, "LUMBERJACK GAME", 0)
+            p.rectb(self.x_personnage + self.taille_img // 2 - 17, self.height // 2 - 46, 67, 17, 0)
             p.text(self.x_personnage + self.taille_img // 2 - 10, self.height // 2 - 20, "CLICK TO START", 0)
+
+            if self.state_sound:
+                p.blt(80, 160, 0, 0, 240, 16, 16, 6)
+            else:
+                p.blt(80, 160, 0, 16, 240, 16, 16, 6)
 
         else:
             p.mouse(False)
@@ -293,6 +320,8 @@ class Main:
         
             for nuage in self.liste_nuages:
                 p.blt(nuage[0], nuage[1], 0, 16, nuage[2], 32, 16, 6)
+
+            p.blt(- 4,self.height - self.taille_img * 3 - 45, 0, 0, 184, 105, 45, 6)
 
             for k in range(6):
                 p.blt(k * 20 - 5, 100, 0, 38, 128, 25, 32, 6)
@@ -316,6 +345,10 @@ class Main:
             if self.start_perso_point_d_interogation:
                 p.blt(self.x_personnage, self.y_personnage, self.img, 48, 48, self.taille_img, self.taille_img, self.trans_font)
 
+            if self.state_sound:
+                p.blt(80, 160, 0, 0, 240, 16, 16, 6)
+            else:
+                p.blt(80, 160, 0, 16, 240, 16, 16, 6)
+
 # Démarrage du jeu
 Main()
-# Démarrage du jeu
