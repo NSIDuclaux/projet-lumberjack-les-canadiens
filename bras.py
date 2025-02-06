@@ -119,7 +119,7 @@ class Main:
             if (not self.file_tronc[1]["droit"] and not self.animation_direction == "Gauche") or (self.file_tronc[1]["droit"] and not self.animation_direction == "Droite"):
                 self.nb_vies -= 1
                 if self.state_sound:
-                    play("ouille.mp3",async_mode=True)
+                    play("Ouille.wav",async_mode=True)
                 if self.animation_repos == "Gauche":
                     for _ in range(15):
                         p.blt(self.x_personnage, self.y_personnage, self.img, 48, 112, self.taille_img, self.taille_img, 6)
@@ -257,7 +257,7 @@ class Main:
 
         if self.state_sound:
             if p.btnp(p.KEY_LEFT) or p.btnp(p.KEY_RIGHT):
-                play(str(randint(1,4))+".mp3",async_mode=True)
+                play((str(randint(1,4))+".wav"),async_mode=True)
 
         if p.btnp(p.KEY_M):
             if self.state_sound:
