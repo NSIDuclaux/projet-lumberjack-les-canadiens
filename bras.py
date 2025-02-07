@@ -138,14 +138,14 @@ class Main:
     def mort(self):
         """Affiche l'écran de fin de jeu avec les animations et les messages."""
         while True:
-            p.cls(self.trans_font)
+            p.cls(12)
             p.rect(0, self.height - self.taille_img * 3, self.width, self.taille_img * 3, 11)
 
-            p.rect(0, self.height - self.taille_img * 3 - 48, self.width, self.taille_img * 3, 7)
+            p.rect(0, self.height - self.taille_img * 3 - 48, self.width, self.taille_img * 3, 6)
             p.blt(- 4,self.height - self.taille_img * 3 - 45, 0, 0, 184, 105, 45, 6)
 
             for k in range(self.width // 16 + 1):
-                p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 8)
+                p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 8, 5, 180)
 
             for k in range(6):
                 p.blt(k * 20 - 5, 100, 0, 38, 128, 25, 32, 6)
@@ -270,18 +270,18 @@ class Main:
 
     def draw(self):
         """Dessine tous les éléments du jeu à chaque frame."""
-        p.cls(self.trans_font)
+        p.cls(12)
 
         if self.start_page:
             p.mouse(True)
-            p.rect(0, self.height - self.taille_img * 3 - 48, self.width, self.taille_img * 3, 7)
+            p.rect(0, self.height - self.taille_img * 3 - 48, self.width, self.taille_img * 3, 6)
 
             for k in range(self.width // 16 + 1):
-                p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 8)
+                p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 8, 5, 180)
 
             p.rect(0, self.height - self.taille_img * 3, self.width, self.taille_img * 3, 11)
             p.blt(self.x_origine_tronc - self.taille_img // 2, self.y_origine_tronc + self.taille_img, self.img, 16, 48, self.taille_img * 2, self.taille_img)
-            p.blt(self.x_origine_tronc - self.taille_img // 2 + 8, self.y_origine_tronc + self.taille_img - 16, 0, 0, 128, 16, 16, 6)
+            p.blt(self.x_origine_tronc - self.taille_img // 2 + 8, self.y_origine_tronc + self.taille_img - 16, 0, 32, 160, 16, 16, 6)
 
             for nuage in self.liste_nuages:
                 p.blt(nuage[0], nuage[1], 0, 16, nuage[2], 32, 16, 6)
@@ -308,10 +308,10 @@ class Main:
 
         else:
             p.mouse(False)
-            p.rect(0, self.height - self.taille_img * 3 - 48, self.width, self.taille_img * 3, 7)
+            p.rect(0, self.height - self.taille_img * 3 - 48, self.width, self.taille_img * 3, 6)
 
             for k in range(self.width // 16 + 1):
-                p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 8)
+                p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 8, 5, 180)
 
             p.rect(0, self.height - self.taille_img * 3, self.width, self.taille_img * 3, 11)
             p.blt(self.x_origine_tronc - self.taille_img // 2, self.y_origine_tronc + self.taille_img, self.img, 16, 48, self.taille_img * 2, self.taille_img)
