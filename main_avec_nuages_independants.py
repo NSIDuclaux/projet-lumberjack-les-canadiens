@@ -3,6 +3,30 @@ from random import randint
 from nava import play
 
 
+class Nuage:
+
+    def __init__(self, x, y, y_max, y_min, n_type, dire):
+        self.x = x
+        self.y = y
+        self.y_min = y_min
+        self.y_max = y_max
+        self.type = n_type
+        self.dir = dire
+        self.time = 0
+
+    def avancer(self):
+        self.time += 1
+        if self.time % 5 == 0:
+            if self.x < - 25:
+                self.x = 95
+            else:
+                self.x -= 2
+
+            if (self.dir < 0 and self.y < self.y_min) or (self.dir > 0 and self.y > self.y_max):
+                self.dir = - self.dir
+            self.y += self.dir
+
+
 class Main:
     def __init__(self):
         # Initialisation de la fenêtre de jeu
@@ -20,7 +44,10 @@ class Main:
         self.taille_img = 16
         self.trans_font = 6
 
-        self.liste_nuages = [[60, 40, 96], [50, 15, 112], [15, 35, 112], [-10, 20, 96]]
+        self.liste_nuages = list()
+        for k in range(4):
+            self.nouveau_nuage()
+            
         self.dir = 1
         self.time = 0
         self.start_page = True
@@ -66,6 +93,22 @@ class Main:
         if self.state_sound:
             p.play(0, 0, loop=True)
         p.run(self.update, self.draw)
+
+
+    def nouveau_nuage(self):
+        x = randint(-1, 8) * 10
+        y = randint(1, 5) * 10
+        y_max = randint(4, 6) * 10
+        y_min = randint(1, 3) * 10
+
+        n_type = 112
+        dire = 1
+        if randint(0, 1):
+            n_type = 96
+            dire = - dire
+
+        self.liste_nuages.append(Nuage(x, y, y_max, y_min, n_type, dire))
+
 
     def ajoute_tronc(self):
         """Ajoute un nouveau tronc à la liste des troncs avec une probabilité d'ajouter une branche."""
@@ -151,7 +194,7 @@ class Main:
                 p.blt(k * 20 - 5, 100, 0, 38, 128, 25, 32, 6)
 
             for nuage in self.liste_nuages:
-                p.blt(nuage[0], nuage[1], 0, 16, nuage[2], 32, 16, 6)
+                p.blt(nuage.x, nuage.y, 0, 16, nuage.type, 32, 16, 6)
 
             p.blt(10, 150, 0, 0, 160, 8, 12, 0)
             p.blt(30, 160, 0, 8, 160, 3, 12, 0)
@@ -241,16 +284,8 @@ class Main:
 
         self.time += 1
 
-        if self.liste_nuages[0][1] < 30 or self.liste_nuages[0][1] > 60:
-            self.dir = - self.dir
-
-
-        if self.time % 5 == 0:
-            for nuage in self.liste_nuages:
-                nuage[0] -= 2
-                nuage[1] += self.dir
-                if nuage[0] < - 25:
-                    nuage[0] = 95
+        for nuage in self.liste_nuages:
+            nuage.avancer()
 
         if p.btn(p.MOUSE_BUTTON_LEFT):
             self.start_page = False
@@ -284,7 +319,7 @@ class Main:
             p.blt(self.x_origine_tronc - self.taille_img // 2 + 8, self.y_origine_tronc + self.taille_img - 16, 0, 32, 160, 16, 16, 6)
 
             for nuage in self.liste_nuages:
-                p.blt(nuage[0], nuage[1], 0, 16, nuage[2], 32, 16, 6)
+                p.blt(nuage.x, nuage.y, 0, 16, nuage.type, 32, 16, 6)
 
             p.blt(- 4,self.height - self.taille_img * 3 - 45, 0, 0, 184, 105, 45, 6)
 
@@ -326,7 +361,7 @@ class Main:
             p.blt(self.x_origine_tronc - self.taille_img // 2, self.y_origine_tronc + self.taille_img, self.img, 16, 48, self.taille_img * 2, self.taille_img)
         
             for nuage in self.liste_nuages:
-                p.blt(nuage[0], nuage[1], 0, 16, nuage[2], 32, 16, 6)
+                p.blt(nuage.x, nuage.y, 0, 16, nuage.type, 32, 16, 6)
 
             p.blt(- 4,self.height - self.taille_img * 3 - 45, 0, 0, 184, 105, 45, 6)
 
