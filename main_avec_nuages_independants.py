@@ -2,7 +2,6 @@ import pyxel as p
 from random import randint
 from nava import play
 
-
 class Nuage:
 
     def __init__(self, x, y, y_max, y_min, n_type, dire):
