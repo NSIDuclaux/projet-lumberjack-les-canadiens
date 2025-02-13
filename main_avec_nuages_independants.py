@@ -3,7 +3,7 @@ from random import randint
 from nava import play
 import string
 from tkinter import *
-
+import sqlite3
 
 class Nuage:
 
@@ -39,24 +39,29 @@ class Main:
 
         # Initialisation des variables de jeu
 
+        self.res = []
         self.curseur = 1
         self.pseudo = ""
         self.password = ""
         self.dictionnaire = {f"KEY_{lettre}": lettre for lettre in string.ascii_uppercase}
 
+        for k in range(10):
+            self.dictionnaire["KEY_KP_" + str(k)] = str(k)
 
         self.interface = True
         self.login_signup = False
         self.ranking = False
 
-        self.x_log = 5
+        self.x_log = 3
         self.y_log = 80
         self.log_len = 93
 
-        self.x_rank = 28
+        self.x_rank = 22
         self.y_rank = 100
         self.rank_len = 53
 
+        self.see_password = False
+        self.num_ranking = 0
 
         self.score = 0
         self.nb_vies = 3
@@ -117,8 +122,34 @@ class Main:
         p.run(self.update, self.draw)
 
 
-    def nouveau_joueur(self, pseudo, password):
-        pass
+    def trie_classement(self, liste):
+        res_liste = list()
+        while liste != []:
+            maxi = liste[0]
+            for ele in liste:
+                if ele[1] > maxi[1]:
+                    maxi = ele
+            res_liste.append(maxi)
+            liste.remove(maxi)
+
+        return res_liste
+
+
+    def pseudo_valide(self, pseudo, password):
+        connexion = sqlite3.connect('ranking.db')
+        c = connexion.cursor()
+
+        data = (pseudo, )
+        c.execute('''SELECT Pseudo, Password FROM LumberJackGame WHERE Pseudo = ?''', data)
+        res = c.fetchall()
+
+        connexion.commit()
+        connexion.close()
+
+        if len(res) == 0:
+            return [True, True]
+        
+        return [res[0][1] == password, False]
 
 
     def nouveau_nuage(self):
@@ -207,6 +238,20 @@ class Main:
 
     def mort(self):
         """Affiche l'écran de fin de jeu avec les animations et les messages."""
+        if self.pseudo != "":
+
+            connexion = sqlite3.connect('ranking.db')
+            c = connexion.cursor()
+            data = (self.pseudo, )
+            c.execute('''SELECT Score FROM "LumberJackGame" WHERE Pseudo = ?''', data)
+            res = c.fetchall() 
+
+            if res[0][0] <= self.score:
+                data = (self.score, self.pseudo, )
+                c.execute('''UPDATE "LumberJackGame" set Score = ? WHERE Pseudo = ?''', data)
+            connexion.commit()
+            connexion.close()
+
         while True:
             p.cls(12)
             p.rect(0, self.height - self.taille_img * 3, self.width, self.taille_img * 3, 11)
@@ -238,7 +283,7 @@ class Main:
             if self.animation_repos == "Gauche":
                 p.blt(self.x_personnage, self.y_personnage, self.img, 48, 112, self.taille_img, self.taille_img, 6)
             elif self.animation_repos == "Droite":
-                p.blt(self.x_personnage + self.taille_img * 2, self.y_personnage, self.img, 48, 112, self.taille_img, self.taille_img, 6)
+                p.blt(self.x_personnage + self.taille_img * 2, self.y_personnage, self.img, 48, 112, self.taille_img, self.taille_img, 6) 
 
             if self.state_sound:
                 p.blt(80, 160, 0, 0, 240, 16, 16, 6)
@@ -340,7 +385,8 @@ class Main:
 
         if self.interface or self.login_signup or self.ranking:
             
-            if p.btn(p.KEY_L) and self.interface:
+            if p.btnp(p.KEY_L) and self.interface:
+                self.pseudo = ""
                 self.interface = False
                 self.login_signup = True
 
@@ -348,17 +394,22 @@ class Main:
                 self.interface = False
                 self.ranking = True
 
-            if self.login_signup and p.btnp(p.KEY_B):
+            if self.login_signup and p.btnp(p.KEY_DELETE):
                 self.login_signup = False
                 self.interface = True
                 self.password = ""
                 self.pseudo = ""
 
-            elif self.ranking and p.btnp(p.KEY_B):
+            elif self.ranking and p.btnp(p.KEY_DELETE):
                 self.ranking = False
                 self.interface = True
+                self.num_ranking = 0
 
-            if self.login_signup and not p.btnp(p.KEY_B):
+            if self.login_signup and not p.btnp(p.KEY_DELETE):
+
+                if p.btnp(p.KEY_KP_MULTIPLY):
+                    self.see_password = not self.see_password
+
                 for (key, val) in self.dictionnaire.items():
                     if p.btnp(eval("p." + key)):
                         if len(self.pseudo) < 16 and self.curseur == 1:
@@ -381,8 +432,19 @@ class Main:
                 elif p.btnp(p.KEY_KP_2):
                     self.curseur = 2
 
-                if p.btnp(p.KEY_RETURN):
-                    self.nouveau_joueur(self.pseudo, self.password)
+                res = self.pseudo_valide(self.pseudo, self.password)
+
+                if p.btnp(p.KEY_RETURN) and self.password != "" and self.pseudo != "" and res[0]:
+                    if res[1]:
+                        connexion = sqlite3.connect('ranking.db')
+
+                        c = connexion.cursor()  
+                        data = (self.pseudo, self.password, 0, )
+                        c.execute('''INSERT INTO LumberJackGame VALUES (?, ?, ?)''', data)
+
+                        connexion.commit()
+                        connexion.close()
+
                     self.interface = False
                     self.login_signup = False
                     self.ranking = False
@@ -404,11 +466,15 @@ class Main:
 
             p.rect(self.x_log, self.y_log, self.log_len, 12, 7)
             p.rectb(self.x_log, self.y_log, self.log_len, 12, 0)
-            p.text(self.x_log + 3, self.y_log + 4, " Login / Sign-up -> L", 0)
+            p.text(self.x_log + 2, self.y_log + 4, " Login / Sign-up -> L", 0)
 
             p.rect(self.x_rank, self.y_rank, self.rank_len, 12, 7)
             p.rectb(self.x_rank, self.y_rank, self.rank_len, 12, 0)
-            p.text(30, 104, "Ranking -> R", 0)
+            p.text(25, 104, "Ranking -> R", 0)
+
+            p.rect(15, 150, 70, 12, 8)
+            p.rectb(15, 150, 70, 12, 0)
+            p.text(33, 154, "PLAY -> J", 0)
 
         
         elif self.login_signup:
@@ -420,23 +486,37 @@ class Main:
             p.text(20, 34, "LumberJack Game", 0)
 
             p.rect(2, 2, 16, 16, 7)
-            p.rectb(2, 2, 16, 17, 0)
-            p.blt(2, 2, 0, 48, 160, 16, 16, 6)
+            p.rectb(2, 2, 16, 16, 0)
+            p.blt(2, 2, 0, 64, 16, 16, 16, 6)
+            p.text(16, 9, " -> Suppr", 0)
 
-            p.text(32, 70, "Pseudo -> 1", 0)
-            p.rect(15, 80, 70, 12, 7)
-            p.rectb(15, 80, 70, 12, 0)
-            p.text(17, 84, self.pseudo, 0)
+            p.text(15, 60, "Current cursor : " + str(self.curseur), 7)
 
-            p.text(28, 100, "Password -> 2", 0)
-            p.rect(15, 110, 70, 12, 7)
-            p.rectb(15, 110, 70, 12, 0)
-            p.text(17, 114, self.password, 0)
+            p.text(28, 80, "Pseudo -> 1", 0)
+            p.rect(15, 90, 70, 12, 7)
+            p.rectb(15, 90, 70, 12, 0)
+            p.text(17, 94, self.pseudo, 0)
 
-            p.text(30, 140, "Press ENTER", 0)
+            p.text(24, 110, "Password -> 2", 0)
+            p.rect(15, 120, 70, 12, 7)
+            p.rectb(15, 120, 70, 12, 0)
+            p.blt(40, 133, 0, 64, 0, 8, 8, 6)
+            p.text(50, 135, "*", 7)
+            
+
+            password = "*" * len(self.password)
+            if self.see_password:
+                password = self.password
+
+            p.text(17, 124, password, 0)
+
+            p.rect(15, 150, 70, 12, 8)
+            p.rectb(15, 150, 70, 12, 0)
+            p.text(28, 154, "Press ENTER", 0)
         
 
         elif self.ranking:
+            self.num_ranking += 1
             p.mouse(True)
 
             p.cls(6)
@@ -445,8 +525,27 @@ class Main:
             p.text(20, 34, "LumberJack Game", 0)
 
             p.rect(2, 2, 16, 16, 7)
-            p.rectb(2, 2, 16, 17, 0)
-            p.blt(2, 2, 0, 48, 160, 16, 16, 6)
+            p.rectb(2, 2, 16, 16, 0)
+            p.blt(2, 2, 0, 64, 16, 16, 16, 6)
+            p.text(16, 9, " -> Suppr", 0)
+
+            if self.num_ranking == 1:
+                connexion = sqlite3.connect('ranking.db')
+                c = connexion.cursor()
+
+                c.execute('''SELECT Pseudo, Score FROM LumberJackGame''')
+                self.res = c.fetchall()
+                self.res = self.trie_classement(self.res)
+                connexion.commit()
+                connexion.close()
+
+            for k in range(len(self.res)):
+                if k > 3 and k < 6:
+                    p.text(10, 60 + 16 * k, str(k) + ". " + self.res[k][0] + " / " + str(self.res[k][1]), 0)  
+                else:
+                    p.blt(10, 60 + 16 * k, 0, 80 + 16 * k, 0, 16, 16, 6)
+                    p.text(27, 66 + 16 * k, self.res[k][0] + " / " + str(self.res[k][1]), 0)  
+
 
         elif self.start_page:
             p.mouse(True)
@@ -473,7 +572,6 @@ class Main:
             p.blt(80, 140, 0, 19, 160, 8, 12, 0)
 
             c = 8
-            d = 30
             t = self.time % 90
 
             if t <= 30:
