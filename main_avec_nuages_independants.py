@@ -39,7 +39,9 @@ class Main:
 
         # Initialisation des variables de jeu
 
+        self.curseur = 1
         self.pseudo = ""
+        self.password = ""
         self.dictionnaire = {f"KEY_{lettre}": lettre for lettre in string.ascii_uppercase}
 
 
@@ -113,6 +115,10 @@ class Main:
         if self.state_sound:
             p.play(0, 0, loop=True)
         p.run(self.update, self.draw)
+
+
+    def nouveau_joueur(self, pseudo, password):
+        pass
 
 
     def nouveau_nuage(self):
@@ -325,15 +331,15 @@ class Main:
                 p.play(0, 0, loop=True)
             self.state_sound = not self.state_sound
 
-
-
-
-        if self.interface or self.login_signup or self.ranking:
+        if self.interface:
             if p.btnp(p.KEY_J):
                 self.interface = False
                 self.login_signup = False
                 self.ranking = False
                 self.start_page = True
+
+        if self.interface or self.login_signup or self.ranking:
+            
             if p.btn(p.KEY_L) and self.interface:
                 self.interface = False
                 self.login_signup = True
@@ -345,6 +351,8 @@ class Main:
             if self.login_signup and p.btnp(p.KEY_B):
                 self.login_signup = False
                 self.interface = True
+                self.password = ""
+                self.pseudo = ""
 
             elif self.ranking and p.btnp(p.KEY_B):
                 self.ranking = False
@@ -353,11 +361,33 @@ class Main:
             if self.login_signup and not p.btnp(p.KEY_B):
                 for (key, val) in self.dictionnaire.items():
                     if p.btnp(eval("p." + key)):
-                        self.pseudo += val
-                if p.btnp(p.KEY_SPACE):
-                    self.pseudo += " "
-                elif p.btnp(p.KEY_BACKSPACE):
+                        if len(self.pseudo) < 16 and self.curseur == 1:
+                            self.pseudo += val
+                        elif len(self.password) < 16 and self.curseur == 2:
+                            self.password += val
+
+                if len(self.pseudo) < 16 and self.curseur == 1 and p.btnp(p.KEY_SPACE):
+                    self.pseudo += "_"
+                elif len(self.password) < 16 and self.curseur == 2 and p.btnp(p.KEY_SPACE):
+                    self.password += "_"
+
+                if len(self.pseudo) < 16 and self.curseur == 1 and p.btnp(p.KEY_BACKSPACE):
                     self.pseudo = self.pseudo[:-1]
+                elif len(self.password) < 16 and self.curseur == 2 and p.btnp(p.KEY_BACKSPACE):
+                    self.password = self.password[:-1]
+
+                if p.btnp(p.KEY_KP_1):
+                    self.curseur = 1
+                elif p.btnp(p.KEY_KP_2):
+                    self.curseur = 2
+
+                if p.btnp(p.KEY_RETURN):
+                    self.nouveau_joueur(self.pseudo, self.password)
+                    self.interface = False
+                    self.login_signup = False
+                    self.ranking = False
+                    self.start_page = True
+
 
 
     def draw(self):
@@ -393,16 +423,17 @@ class Main:
             p.rectb(2, 2, 16, 17, 0)
             p.blt(2, 2, 0, 48, 160, 16, 16, 6)
 
-            p.text(35, 70, "Pseudo", 0)
+            p.text(32, 70, "Pseudo -> 1", 0)
             p.rect(15, 80, 70, 12, 7)
             p.rectb(15, 80, 70, 12, 0)
             p.text(17, 84, self.pseudo, 0)
 
-            p.text(35, 100, "Password", 0)
+            p.text(28, 100, "Password -> 2", 0)
             p.rect(15, 110, 70, 12, 7)
             p.rectb(15, 110, 70, 12, 0)
+            p.text(17, 114, self.password, 0)
 
-            p.text(30, 50, "Press ENTER", 0)
+            p.text(30, 140, "Press ENTER", 0)
         
 
         elif self.ranking:
