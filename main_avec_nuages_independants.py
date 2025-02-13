@@ -1,6 +1,7 @@
 import pyxel as p
 from random import randint
 from nava import play
+import string
 from tkinter import *
 
 
@@ -39,6 +40,8 @@ class Main:
         # Initialisation des variables de jeu
 
         self.pseudo = ""
+        self.dictionnaire = {f"KEY_{lettre}": lettre for lettre in string.ascii_uppercase}
+
 
         self.interface = True
         self.login_signup = False
@@ -334,6 +337,7 @@ class Main:
             if p.btn(p.KEY_L) and self.interface:
                 self.interface = False
                 self.login_signup = True
+
             elif p.btn(p.KEY_R) and self.interface:
                 self.interface = False
                 self.ranking = True
@@ -347,9 +351,10 @@ class Main:
                 self.interface = True
 
             if self.login_signup and not p.btnp(p.KEY_B):
-                if p.btnp(p.KEY_A):
-                    self.pseudo += "a"
-                elif p.btnp(p.KEY_SPACE):
+                for (key, val) in self.dictionnaire.items():
+                    if p.btnp(eval("p." + key)):
+                        self.pseudo += val
+                if p.btnp(p.KEY_SPACE):
                     self.pseudo += " "
                 elif p.btnp(p.KEY_BACKSPACE):
                     self.pseudo = self.pseudo[:-1]
