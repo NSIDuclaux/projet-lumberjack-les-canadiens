@@ -187,6 +187,10 @@ class Main:
                 self.animation_timer = 0
                 self.retirer_tronc()
                 self.collisions()
+<<<<<<< HEAD
+            elif p.btn(p.KEY_RIGHT):
+=======
+>>>>>>> refs/remotes/origin/main
                 self.start_perso_point_d_interogation = False
 
             elif p.btnp(p.KEY_RIGHT):
