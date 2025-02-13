@@ -8,7 +8,7 @@ class Main:
         p.init(99, 176, title='interface', quit_key=p.KEY_ESCAPE, fps=30)
         p.load("res.pyxres")
 
-        self.pseudo = "lifdsbksm"
+        self.pseudo = ""
 
         self.interface = True
         self.login_signup = False
@@ -21,10 +21,9 @@ class Main:
         self.x_rank = 28
         self.y_rank = 100
         self.rank_len = 53
+
         p.run(self.update, self.draw)
 
-    def pseudo_input():
-        pass
 
 
     def update(self):
@@ -43,8 +42,17 @@ class Main:
             self.ranking = False
             self.interface = True
         
-        if self.login_signup and p.btnp(p.KEY_B):
-            self.pseudo_input()
+        if self.login_signup and not p.btnp(p.KEY_B):
+            if p.btnp(p.KEY_A):
+                self.pseudo += "a"
+            elif p.btnp(p.KEY_SPACE):
+                self.pseudo += " "
+            elif p.btnp(p.KEY_BACKSPACE):
+                self.pseudo = self.pseudo[:-1]
+            
+            
+
+
 
     def draw(self):
         if self.interface:
