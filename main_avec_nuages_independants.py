@@ -41,7 +41,6 @@ class Main:
         self.interface = True
         self.login_signup = False
         self.ranking = False
-        self.interface_jeu = False
 
         self.x_log = 5
         self.y_log = 80
@@ -310,7 +309,7 @@ class Main:
             if p.btnp(p.KEY_LEFT) or p.btnp(p.KEY_RIGHT):
                 play((str(randint(1,4))+".wav"),async_mode=True)
 
-        if p.btnp(p.KEY_M):
+        if p.btnp(p.KEY_M) and not self.ranking and not self.login_signup and not self.interface:
             if self.state_sound:
                 self.posi_sound = p.play_pos(1)
                 p.stop(self.posi_sound)
@@ -318,9 +317,14 @@ class Main:
                 p.play(0, 0, loop=True)
             self.state_sound = not self.state_sound
 
+
+
+
         if self.interface or self.login_signup or self.ranking:
             if p.btnp(p.KEY_J):
                 self.interface = False
+                self.login_signup = False
+                self.ranking = False
                 self.start_page = True
             if p.btn(p.KEY_L) and self.interface:
                 self.interface = False
