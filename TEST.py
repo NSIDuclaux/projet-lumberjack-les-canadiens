@@ -7,11 +7,21 @@ connexion = sqlite3.connect('mabasecobaye.db')
 c = connexion.cursor()
 
 c.execute("""
-    CREATE TABLE IF NOT EXISTS notes(
+    CREATE TABLE IF NOT EXISTS table(
+    Id INT,
     Nom TEXT,
-    Note INT);
+    Mdp TEXT,
+    Score INT);
     """)
+Id = 0
+Nom = ''
+Mdp = ''
+Score = 0
 
+
+p = "INSERT INTO table VALUES ('" + Id + "','" + Nom + "','" + Mdp + "','" + Score + "')"
+
+c.executescript(p)
 
 #Validation
 connexion.commit()
