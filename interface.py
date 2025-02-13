@@ -84,12 +84,12 @@ class Main:
             p.rectb(2, 2, 16, 17, 0)
             p.blt(2, 2, 0, 48, 160, 16, 16, 6)
 
-            p.text(35, 70, "Pseudo", 0)
+            p.text(32, 70, "Pseudo -> 1", 0)
             p.rect(15, 80, 70, 12, 7)
             p.rectb(15, 80, 70, 12, 0)
             p.text(17, 84, self.pseudo, 0)
 
-            p.text(35, 100, "Password", 0)
+            p.text(28, 100, "Password -> 2", 0)
             p.rect(15, 110, 70, 12, 7)
             p.rectb(15, 110, 70, 12, 0)
 
