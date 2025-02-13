@@ -188,7 +188,6 @@ class Main:
                 self.retirer_tronc()
                 self.collisions()
             elif p.btn(p.KEY_RIGHT):
-=======
                 self.start_perso_point_d_interogation = False
 
             elif p.btnp(p.KEY_RIGHT):
