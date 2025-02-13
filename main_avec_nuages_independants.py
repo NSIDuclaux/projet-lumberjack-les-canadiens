@@ -37,6 +37,23 @@ class Main:
         p.load("res.pyxres", False, False, False, False)
 
         # Initialisation des variables de jeu
+
+        self.pseudo = ""
+
+        self.interface = True
+        self.login_signup = False
+        self.ranking = False
+        self.interface_jeu = False
+
+        self.x_log = 5
+        self.y_log = 80
+        self.log_len = 93
+
+        self.x_rank = 28
+        self.y_rank = 100
+        self.rank_len = 53
+
+
         self.score = 0
         self.nb_vies = 3
         self.start_perso_point_d_interogation = True
@@ -51,7 +68,7 @@ class Main:
             
         self.dir = 1
         self.time = 0
-        self.start_page = True
+        self.start_page = False
         self.state_sound = False
 
         # Position initiale du personnage
@@ -306,12 +323,92 @@ class Main:
                 p.play(0, 0, loop=True)
             self.state_sound = not self.state_sound
 
+        if self.interface or self.login_signup or self.ranking:
+            if p.btnp(p.KEY_J):
+                self.interface = False
+                self.start_page = True
+            if p.btn(p.KEY_L) and self.interface:
+                self.interface = False
+                self.login_signup = True
+            elif p.btn(p.KEY_R) and self.interface:
+                self.interface = False
+                self.ranking = True
+
+            if self.login_signup and p.btnp(p.KEY_B):
+                self.login_signup = False
+                self.interface = True
+
+            elif self.ranking and p.btnp(p.KEY_B):
+                self.ranking = False
+                self.interface = True
+
+            if self.login_signup and not p.btnp(p.KEY_B):
+                if p.btnp(p.KEY_A):
+                    self.pseudo += "a"
+                elif p.btnp(p.KEY_SPACE):
+                    self.pseudo += " "
+                elif p.btnp(p.KEY_BACKSPACE):
+                    self.pseudo = self.pseudo[:-1]
+
 
     def draw(self):
         """Dessine tous les éléments du jeu à chaque frame."""
         p.cls(12)
 
-        if self.start_page:
+        if self.interface:
+            p.mouse(True)
+
+            p.cls(6)
+
+            p.rectb(16, 30, 70, 12, 0)
+            p.text(20, 34, "LumberJack Game", 0)
+
+            p.rect(self.x_log, self.y_log, self.log_len, 12, 7)
+            p.rectb(self.x_log, self.y_log, self.log_len, 12, 0)
+            p.text(self.x_log + 3, self.y_log + 4, " Login / Sign-up -> L", 0)
+
+            p.rect(self.x_rank, self.y_rank, self.rank_len, 12, 7)
+            p.rectb(self.x_rank, self.y_rank, self.rank_len, 12, 0)
+            p.text(30, 104, "Ranking -> R", 0)
+
+        
+        elif self.login_signup:
+            p.mouse(True)
+
+            p.cls(6)
+
+            p.rectb(16, 30, 70, 12, 0)
+            p.text(20, 34, "LumberJack Game", 0)
+
+            p.rect(2, 2, 16, 16, 7)
+            p.rectb(2, 2, 16, 17, 0)
+            p.blt(2, 2, 0, 48, 160, 16, 16, 6)
+
+            p.text(35, 70, "Pseudo", 0)
+            p.rect(15, 80, 70, 12, 7)
+            p.rectb(15, 80, 70, 12, 0)
+            p.text(17, 84, self.pseudo, 0)
+
+            p.text(35, 100, "Password", 0)
+            p.rect(15, 110, 70, 12, 7)
+            p.rectb(15, 110, 70, 12, 0)
+
+            p.text(30, 50, "Press ENTER", 0)
+        
+
+        elif self.ranking:
+            p.mouse(True)
+
+            p.cls(6)
+
+            p.rectb(16, 30, 70, 12, 0)
+            p.text(20, 34, "LumberJack Game", 0)
+
+            p.rect(2, 2, 16, 16, 7)
+            p.rectb(2, 2, 16, 17, 0)
+            p.blt(2, 2, 0, 48, 160, 16, 16, 6)
+
+        elif self.start_page:
             p.mouse(True)
             p.rect(0, self.height - self.taille_img * 3 - 48, self.width, self.taille_img * 3, 6)
 
