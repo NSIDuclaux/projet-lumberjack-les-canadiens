@@ -24,7 +24,7 @@ class Main:
         self.dir = 1
         self.time = 0
         self.start_page = True
-        self.state_sound = False
+        self.state_sound = True
 
         # Position initiale du personnage
         self.x_personnage = self.width // 2 - self.taille_img - self.taille_img // 2
@@ -138,14 +138,14 @@ class Main:
     def mort(self):
         """Affiche l'écran de fin de jeu avec les animations et les messages."""
         while True:
-            p.cls(12)
+            p.cls(self.trans_font)
             p.rect(0, self.height - self.taille_img * 3, self.width, self.taille_img * 3, 11)
 
-            p.rect(0, self.height - self.taille_img * 3 - 48, self.width, self.taille_img * 3, 6)
+            p.rect(0, self.height - self.taille_img * 3 - 48, self.width, self.taille_img * 3, 7)
             p.blt(- 4,self.height - self.taille_img * 3 - 45, 0, 0, 184, 105, 45, 6)
 
             for k in range(self.width // 16 + 1):
-                p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 8, 5, 180)
+                p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 8)
 
             for k in range(6):
                 p.blt(k * 20 - 5, 100, 0, 38, 128, 25, 32, 6)
@@ -181,13 +181,16 @@ class Main:
     def coupe_tronc(self):
         """Gère l'animation du personnage lorsqu'il coupe un tronc."""
         if self.animation_direction is None:
-            if p.btn(p.KEY_LEFT):
+            if p.btnp(p.KEY_LEFT):
                 self.animation_direction = "Gauche"
                 self.animation_image = 0
                 self.animation_timer = 0
                 self.retirer_tronc()
                 self.collisions()
+<<<<<<< HEAD
             elif p.btn(p.KEY_RIGHT):
+=======
+>>>>>>> refs/remotes/origin/main
                 self.start_perso_point_d_interogation = False
 
             elif p.btnp(p.KEY_RIGHT):
@@ -271,18 +274,18 @@ class Main:
 
     def draw(self):
         """Dessine tous les éléments du jeu à chaque frame."""
-        p.cls(12)
+        p.cls(self.trans_font)
 
         if self.start_page:
             p.mouse(True)
-            p.rect(0, self.height - self.taille_img * 3 - 48, self.width, self.taille_img * 3, 6)
+            p.rect(0, self.height - self.taille_img * 3 - 48, self.width, self.taille_img * 3, 7)
 
             for k in range(self.width // 16 + 1):
-                p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 8, 5, 180)
+                p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 8)
 
             p.rect(0, self.height - self.taille_img * 3, self.width, self.taille_img * 3, 11)
             p.blt(self.x_origine_tronc - self.taille_img // 2, self.y_origine_tronc + self.taille_img, self.img, 16, 48, self.taille_img * 2, self.taille_img)
-            p.blt(self.x_origine_tronc - self.taille_img // 2 + 8, self.y_origine_tronc + self.taille_img - 16, 0, 32, 160, 16, 16, 6)
+            p.blt(self.x_origine_tronc - self.taille_img // 2 + 8, self.y_origine_tronc + self.taille_img - 16, 0, 0, 128, 16, 16, 6)
 
             for nuage in self.liste_nuages:
                 p.blt(nuage[0], nuage[1], 0, 16, nuage[2], 32, 16, 6)
@@ -297,19 +300,10 @@ class Main:
             p.blt(70, 165, 0, 11, 160, 8, 12, 0)
             p.blt(80, 140, 0, 19, 160, 8, 12, 0)
 
-            c = 8
-            d = 30
-            t = self.time % 90
-
-            if t <= 30:
-                c = 5
-            elif t >= 60:
-                c = 3
-
 
             p.text(self.x_personnage + self.taille_img // 2 - 13, self.height // 2 - 40, "LUMBERJACK GAME", 0)
             p.rectb(self.x_personnage + self.taille_img // 2 - 17, self.height // 2 - 46, 67, 17, 0)
-            p.text(self.x_personnage + self.taille_img // 2 - 10, self.height // 2 - 20, "CLICK TO START", c)
+            p.text(self.x_personnage + self.taille_img // 2 - 10, self.height // 2 - 20, "CLICK TO START", 0)
 
             if self.state_sound:
                 p.blt(80, 160, 0, 0, 240, 16, 16, 6)
@@ -318,10 +312,10 @@ class Main:
 
         else:
             p.mouse(False)
-            p.rect(0, self.height - self.taille_img * 3 - 48, self.width, self.taille_img * 3, 6)
+            p.rect(0, self.height - self.taille_img * 3 - 48, self.width, self.taille_img * 3, 7)
 
             for k in range(self.width // 16 + 1):
-                p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 8, 5, 180)
+                p.blt(k * 16, self.height - self.taille_img * 3 - 52, 0, 0, 144, 16, 8)
 
             p.rect(0, self.height - self.taille_img * 3, self.width, self.taille_img * 3, 11)
             p.blt(self.x_origine_tronc - self.taille_img // 2, self.y_origine_tronc + self.taille_img, self.img, 16, 48, self.taille_img * 2, self.taille_img)
