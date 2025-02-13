@@ -45,9 +45,6 @@ class Main:
         self.password = ""
         self.dictionnaire = {f"KEY_{lettre}": lettre for lettre in string.ascii_uppercase}
 
-        for k in range(10):
-            self.dictionnaire["KEY_KP_" + str(k)] = str(k)
-
         self.interface = True
         self.login_signup = False
         self.ranking = False
