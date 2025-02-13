@@ -1,6 +1,8 @@
 import pyxel as p
 from random import randint
 from nava import play
+from tkinter import *
+
 
 class Nuage:
 
@@ -177,6 +179,7 @@ class Main:
         if self.nb_vies == 0:
             self.mort()
 
+
     def mort(self):
         """Affiche l'écran de fin de jeu avec les animations et les messages."""
         while True:
@@ -219,6 +222,8 @@ class Main:
 
             self.file_tronc = list()
             p.show()
+
+        update_score()
 
     def coupe_tronc(self):
         """Gère l'animation du personnage lorsqu'il coupe un tronc."""
