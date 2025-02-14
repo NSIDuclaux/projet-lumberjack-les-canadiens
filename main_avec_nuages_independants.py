@@ -45,6 +45,9 @@ class Main:
         self.password = ""
         self.dictionnaire = {f"KEY_{lettre}": lettre for lettre in string.ascii_uppercase}
 
+        for k in range(10):
+            self.dictionnaire["KEY_" + str(k)] = str(k)
+
         self.interface = True
         self.login_signup = False
         self.ranking = False
@@ -537,8 +540,8 @@ class Main:
                 connexion.close()
 
             for k in range(len(self.res)):
-                if k > 2 and k < 6:
-                    p.text(10, 66 + 16 * k, str(k) + ". " + self.res[k][0] + " / " + str(self.res[k][1]), 0)  
+                if k > 2 and k < 7:
+                    p.text(10, 66 + 16 * k, str(k + 1) + ". " + self.res[k][0] + " / " + str(self.res[k][1]), 0)  
                 else:
                     p.blt(5, 60 + 16 * k, 0, 80 + 16 * k, 0, 16, 16, 6)
                     p.text(22, 66 + 16 * k, self.res[k][0] + " / " + str(self.res[k][1]), 0)  
