@@ -5,6 +5,23 @@ import string
 from tkinter import *
 import sqlite3
 
+from hashlib import blake2b
+from hmac import compare_digest
+
+SECRET_KEY = b'pseudorandomly generated server secret key'
+AUTH_SIZE = 16
+
+def sign(cookie):
+    h = blake2b(digest_size=AUTH_SIZE, key=SECRET_KEY)
+    h.update(cookie)
+    return h.hexdigest().encode('utf-8')
+
+def verify(cookie, sig):
+    good_sig = sign(cookie)
+    return compare_digest(good_sig, sig)
+
+
+
 class Nuage:
 
     def __init__(self, x, y, y_max, y_min, n_type, dire):
@@ -162,7 +179,7 @@ class Main:
         if len(res) == 0:
             return [True, True]
         
-        return [res[0][1] == password, False]
+        return [verify(password.encode(), res[0][1]), False]
 
 
     def nouveau_nuage(self):
@@ -513,7 +530,7 @@ class Main:
                         connexion = sqlite3.connect('ranking.db')
 
                         c = connexion.cursor()  
-                        data = (self.pseudo_log, self.password_log, 0, )
+                        data = (self.pseudo_log, sign(self.password_log.encode()), 0, )
                         c.execute('''INSERT INTO LumberJackGame VALUES (?, ?, ?)''', data)
 
                         connexion.commit()
@@ -556,21 +573,17 @@ class Main:
                 res = self.pseudo_valide(self.pseudo_del, self.password_del)
 
                 if p.btnp(p.KEY_RETURN) and self.password_del != "" and self.pseudo_del != "" and res[0]:
-                    if res[0]:
-                        connexion = sqlite3.connect('ranking.db')
-
-                        c = connexion.cursor()  
-                        data = (self.pseudo_del, self.password_del, )
-                        c.execute('''DELETE FROM "LumberJackGame" WHERE Pseudo = ? AND Password = ?''', data)
-
-                        connexion.commit()
-                        connexion.close()
-
-                        self.interface = True
-                        self.login_signup = False
-                        self.ranking = False
-                        self.start_page = False
-                        self.delete_account = False
+                    connexion = sqlite3.connect('ranking.db')
+                    c = connexion.cursor()  
+                    data = (self.pseudo_del, sign(self.password_del.encode()), )
+                    c.execute('''DELETE FROM "LumberJackGame" WHERE Pseudo = ? AND Password = ?''', data)
+                    connexion.commit()
+                    connexion.close()
+                    self.interface = True
+                    self.login_signup = False
+                    self.ranking = False
+                    self.start_page = False
+                    self.delete_account = False
 
 
 
