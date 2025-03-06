@@ -18,7 +18,13 @@ def sign(cookie):
 
 def verify(cookie, sig):
     good_sig = sign(cookie)
-    return compare_digest(good_sig, sig)
+    if isinstance(sig, str):
+        sig = sig.encode('utf-8')
+    
+    res = compare_digest(good_sig, sig)
+    print(good_sig, sig)
+    print(res)
+    return res
 
 
 
