@@ -1,0 +1,2 @@
+[console_scripts]
+nava = nava.__main__:main
