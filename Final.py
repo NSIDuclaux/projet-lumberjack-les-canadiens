@@ -97,7 +97,7 @@ class Main:
 
         self.score = 0
         self.nb_vies = 3
-        self.start_perso_point_d_interogation = True
+        self.start_state = True
 
         self.img = 0
         self.taille_img = 16
@@ -192,7 +192,7 @@ class Main:
 
         n_type = 112
         dire = 1
-        if randint(0, 1):
+        if bool(randint(0, 1)):
             n_type = 96
             dire = - dire
 
@@ -293,7 +293,7 @@ class Main:
                 self.animation_timer = 0
                 self.retirer_tronc()
                 self.collisions()
-                self.start_perso_point_d_interogation = False
+                self.start_state = False
 
             elif p.btnp(p.KEY_RIGHT):
                 self.animation_direction = "Droite"
@@ -301,7 +301,7 @@ class Main:
                 self.animation_timer = 0
                 self.retirer_tronc()
                 self.collisions()
-                self.start_perso_point_d_interogation = False
+                self.start_state = False
 
         if self.animation_direction is not None:
             self.animation_personnage(self.animation_direction)
@@ -385,7 +385,7 @@ class Main:
 
             self.score = 0
             self.nb_vies = 3
-            self.start_perso_point_d_interogation = True
+            self.start_state = True
 
             self.img = 0
             self.taille_img = 16
@@ -840,7 +840,7 @@ class Main:
             p.text(self.width // 9 - self.taille_img // 4, self.taille_img // 2 - self.taille_img // 8, str(self.score), 0)
             for vie in range(self.nb_vies):
                 p.blt(self.width - self.taille_img - vie * 14, 1, self.img, 0, 0, self.taille_img, self.taille_img, self.trans_font)
-            if self.start_perso_point_d_interogation:
+            if self.start_state:
                 p.blt(self.x_personnage, self.y_personnage, self.img, 48, 48, self.taille_img, self.taille_img, self.trans_font)
             if self.state_sound:
                 p.blt(80, 160, 0, 0, 240, 16, 16, 6)
