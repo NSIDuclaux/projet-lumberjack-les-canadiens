@@ -2,7 +2,6 @@ import pyxel as p
 from random import randint
 from nava import play
 import string
-from tkinter import *
 import sqlite3
 
 from hashlib import blake2b
