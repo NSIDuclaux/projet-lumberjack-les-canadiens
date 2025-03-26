@@ -167,7 +167,7 @@ class Main:
 
 
     def pseudo_valide(self, pseudo, password):
-        connexion = sqlite3.connect('ranking.db')
+        connexion = sqlite3.connect('data/ranking.db')
         c = connexion.cursor()
 
         data = (pseudo, )
@@ -250,7 +250,7 @@ class Main:
             if (not self.file_tronc[1]["droit"] and not self.animation_direction == "Gauche") or (self.file_tronc[1]["droit"] and not self.animation_direction == "Droite"):
                 self.nb_vies -= 1
                 if self.state_sound:
-                    play("Ouille.wav",async_mode=True)
+                    play("data/Ouille.wav",async_mode=True)
                 if self.animation_repos == "Gauche":
                     for _ in range(15):
                         p.blt(self.x_personnage, self.y_personnage, self.img, 48, 112, self.taille_img, self.taille_img, 6)
@@ -270,7 +270,7 @@ class Main:
 
                 self.send_score = False
 
-                connexion = sqlite3.connect('ranking.db')
+                connexion = sqlite3.connect('data/ranking.db')
                 c = connexion.cursor()
                 data = (self.pseudo_log, )
                 c.execute('''SELECT Score FROM "LumberJackGame" WHERE Pseudo = ?''', data)
@@ -445,7 +445,7 @@ class Main:
 
         if self.state_sound:
             if p.btnp(p.KEY_LEFT) or p.btnp(p.KEY_RIGHT):
-                play((str(randint(1,4))+".wav"),async_mode=True)
+                play(("data/" + str(randint(1,4))+".wav"),async_mode=True)
 
         if p.btnp(p.KEY_M) and not self.ranking and not self.login_signup and not self.interface and not self.delete_account:
             if self.state_sound:
@@ -528,7 +528,7 @@ class Main:
 
                 if p.btnp(p.KEY_RETURN) and self.password_log != "" and self.pseudo_log != "" and res[0]:
                     if res[1]:
-                        connexion = sqlite3.connect('ranking.db')
+                        connexion = sqlite3.connect('data/ranking.db')
 
                         c = connexion.cursor()  
                         data = (self.pseudo_log, sign(self.password_log.encode()), 0, )
@@ -574,7 +574,7 @@ class Main:
                 res = self.pseudo_valide(self.pseudo_del, self.password_del)
 
                 if p.btnp(p.KEY_RETURN) and self.password_del != "" and self.pseudo_del != "" and res[0]:
-                    connexion = sqlite3.connect('ranking.db')
+                    connexion = sqlite3.connect('data/ranking.db')
                     c = connexion.cursor()  
                     data = (self.pseudo_del, sign(self.password_del.encode()), )
                     c.execute('''DELETE FROM "LumberJackGame" WHERE Pseudo = ? AND Password = ?''', data)
@@ -725,7 +725,7 @@ class Main:
             p.text(16, 9, " -> Suppr", 0)
 
             if self.num_ranking == 1:
-                connexion = sqlite3.connect('ranking.db')
+                connexion = sqlite3.connect('data/ranking.db')
                 c = connexion.cursor()
 
                 c.execute('''SELECT Pseudo, Score FROM LumberJackGame''')
