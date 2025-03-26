@@ -2,7 +2,6 @@ import pyxel as p
 from random import randint
 from nava import play
 import string
-from tkinter import *
 import sqlite3
 
 from hashlib import blake2b
@@ -97,7 +96,7 @@ class Main:
 
         self.score = 0
         self.nb_vies = 3
-        self.start_perso_point_d_interogation = True
+        self.start_state = True
 
         self.img = 0
         self.taille_img = 16
@@ -168,7 +167,7 @@ class Main:
 
 
     def pseudo_valide(self, pseudo, password):
-        connexion = sqlite3.connect('ranking.db')
+        connexion = sqlite3.connect('data/ranking.db')
         c = connexion.cursor()
 
         data = (pseudo, )
@@ -192,7 +191,7 @@ class Main:
 
         n_type = 112
         dire = 1
-        if randint(0, 1):
+        if bool(randint(0, 1)):
             n_type = 96
             dire = - dire
 
@@ -251,7 +250,7 @@ class Main:
             if (not self.file_tronc[1]["droit"] and not self.animation_direction == "Gauche") or (self.file_tronc[1]["droit"] and not self.animation_direction == "Droite"):
                 self.nb_vies -= 1
                 if self.state_sound:
-                    play("Ouille.wav",async_mode=True)
+                    play("data/Ouille.wav",async_mode=True)
                 if self.animation_repos == "Gauche":
                     for _ in range(15):
                         p.blt(self.x_personnage, self.y_personnage, self.img, 48, 112, self.taille_img, self.taille_img, 6)
@@ -271,7 +270,7 @@ class Main:
 
                 self.send_score = False
 
-                connexion = sqlite3.connect('ranking.db')
+                connexion = sqlite3.connect('data/ranking.db')
                 c = connexion.cursor()
                 data = (self.pseudo_log, )
                 c.execute('''SELECT Score FROM "LumberJackGame" WHERE Pseudo = ?''', data)
@@ -293,7 +292,7 @@ class Main:
                 self.animation_timer = 0
                 self.retirer_tronc()
                 self.collisions()
-                self.start_perso_point_d_interogation = False
+                self.start_state = False
 
             elif p.btnp(p.KEY_RIGHT):
                 self.animation_direction = "Droite"
@@ -301,7 +300,7 @@ class Main:
                 self.animation_timer = 0
                 self.retirer_tronc()
                 self.collisions()
-                self.start_perso_point_d_interogation = False
+                self.start_state = False
 
         if self.animation_direction is not None:
             self.animation_personnage(self.animation_direction)
@@ -385,7 +384,7 @@ class Main:
 
             self.score = 0
             self.nb_vies = 3
-            self.start_perso_point_d_interogation = True
+            self.start_state = True
 
             self.img = 0
             self.taille_img = 16
@@ -446,7 +445,7 @@ class Main:
 
         if self.state_sound:
             if p.btnp(p.KEY_LEFT) or p.btnp(p.KEY_RIGHT):
-                play((str(randint(1,4))+".wav"),async_mode=True)
+                play(("data/" + str(randint(1,4))+".wav"),async_mode=True)
 
         if p.btnp(p.KEY_M) and not self.ranking and not self.login_signup and not self.interface and not self.delete_account:
             if self.state_sound:
@@ -529,7 +528,7 @@ class Main:
 
                 if p.btnp(p.KEY_RETURN) and self.password_log != "" and self.pseudo_log != "" and res[0]:
                     if res[1]:
-                        connexion = sqlite3.connect('ranking.db')
+                        connexion = sqlite3.connect('data/ranking.db')
 
                         c = connexion.cursor()  
                         data = (self.pseudo_log, sign(self.password_log.encode()), 0, )
@@ -575,7 +574,7 @@ class Main:
                 res = self.pseudo_valide(self.pseudo_del, self.password_del)
 
                 if p.btnp(p.KEY_RETURN) and self.password_del != "" and self.pseudo_del != "" and res[0]:
-                    connexion = sqlite3.connect('ranking.db')
+                    connexion = sqlite3.connect('data/ranking.db')
                     c = connexion.cursor()  
                     data = (self.pseudo_del, sign(self.password_del.encode()), )
                     c.execute('''DELETE FROM "LumberJackGame" WHERE Pseudo = ? AND Password = ?''', data)
@@ -726,7 +725,7 @@ class Main:
             p.text(16, 9, " -> Suppr", 0)
 
             if self.num_ranking == 1:
-                connexion = sqlite3.connect('ranking.db')
+                connexion = sqlite3.connect('data/ranking.db')
                 c = connexion.cursor()
 
                 c.execute('''SELECT Pseudo, Score FROM LumberJackGame''')
@@ -840,7 +839,7 @@ class Main:
             p.text(self.width // 9 - self.taille_img // 4, self.taille_img // 2 - self.taille_img // 8, str(self.score), 0)
             for vie in range(self.nb_vies):
                 p.blt(self.width - self.taille_img - vie * 14, 1, self.img, 0, 0, self.taille_img, self.taille_img, self.trans_font)
-            if self.start_perso_point_d_interogation:
+            if self.start_state:
                 p.blt(self.x_personnage, self.y_personnage, self.img, 48, 48, self.taille_img, self.taille_img, self.trans_font)
             if self.state_sound:
                 p.blt(80, 160, 0, 0, 240, 16, 16, 6)
