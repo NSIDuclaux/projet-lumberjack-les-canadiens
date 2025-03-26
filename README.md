@@ -15,7 +15,7 @@ Peux-tu m'indiquer où couper le tronc pour éviter les branches tombantes et pr
 - Coupe le tronc avec les flèches directionnelles **droite** et **gauche** 🏹.
 - Évite les branches qui tombent à chaque étage 🌿.
 - Chaque tronc coupé correctement te donne **+1 point**.
-- Si une branche te tombe dessus, tu perds une vie ❌ et ne gagnes pas de points.
+- Si une branche te tombe dessus, tu perds une vie ❌
 - Pas de limite de temps ⏳ ! Prends tout le temps dont tu as besoin.
 - Essayez de couper le plus de branches possible !
 
@@ -30,10 +30,10 @@ Bonne chance !! 🍀
 
 ```sh
 # Cloner le projet
-git clone https://github.com/votre-repo/LumberJackGame.git
+git clone https://github.com/NSIDuclaux/projet-lumberjack-les-canadiens.git
 
 # Aller dans le dossier du projet
-cd LumberJackGame
+cd projet-lumberjack-les-canadiens
 
 # Lancer le jeu
-python main.py
+python Final.py
