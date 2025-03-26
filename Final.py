@@ -520,9 +520,9 @@ class Main:
                 elif len(self.password_log) < 16 and self.curseur_log == 2 and p.btnp(p.KEY_BACKSPACE):
                     self.password_log = self.password_log[:-1]
 
-                if p.btnp(p.KEY_KP_1):
+                if p.btnp(p.KEY_KP_1) or p.btnp(p.KEY_UP):
                     self.curseur_log = 1
-                elif p.btnp(p.KEY_KP_2):
+                elif p.btnp(p.KEY_KP_2) or p.btnp(p.KEY_DOWN):
                     self.curseur_log = 2
 
                 res = self.pseudo_valide(self.pseudo_log, self.password_log)
@@ -567,9 +567,9 @@ class Main:
                 elif len(self.password_del) < 16 and self.curseur_del == 2 and p.btnp(p.KEY_BACKSPACE):
                     self.password_del = self.password_del[:-1]
 
-                if p.btnp(p.KEY_KP_1):
+                if p.btnp(p.KEY_KP_1) or p.btnp(p.KEY_UP):
                     self.curseur_del = 1
-                elif p.btnp(p.KEY_KP_2):
+                elif p.btnp(p.KEY_KP_2) or p.btnp(p.KEY_DOWN):
                     self.curseur_del = 2
 
                 res = self.pseudo_valide(self.pseudo_del, self.password_del)
