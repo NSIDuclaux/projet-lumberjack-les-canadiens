@@ -2,8 +2,26 @@ import pyxel as p
 from random import randint
 from nava import play
 import string
-from tkinter import *
 import sqlite3
+
+from hashlib import blake2b
+from hmac import compare_digest
+
+SECRET_KEY = b'pseudorandomly generated server secret key'
+AUTH_SIZE = 16
+
+def sign(cookie):
+    h = blake2b(digest_size=AUTH_SIZE, key=SECRET_KEY)
+    h.update(cookie)
+    return h.hexdigest().encode('utf-8')
+
+def verify(cookie, sig):
+    good_sig = sign(cookie)
+    if isinstance(sig, str):
+        sig = sig.encode('utf-8')
+    return compare_digest(good_sig, sig)
+
+
 
 class Nuage:
 
@@ -40,9 +58,17 @@ class Main:
         # Initialisation des variables de jeu
 
         self.res = []
-        self.curseur = 1
-        self.pseudo = ""
-        self.password = ""
+
+        self.curseur_log = 1
+        self.pseudo_log = ""
+        self.password_log = ""
+        self.see_password_log = False
+
+        self.curseur_del = 1
+        self.pseudo_del = ""
+        self.password_del = ""
+        self.see_password_del = False
+
         self.dictionnaire = {f"KEY_{lettre}": lettre for lettre in string.ascii_uppercase}
 
         for k in range(10):
@@ -50,6 +76,7 @@ class Main:
 
         self.interface = True
         self.login_signup = False
+        self.delete_account = False
         self.ranking = False
 
         self.finish_page = False
@@ -58,19 +85,18 @@ class Main:
         self.send_score = True
 
         self.x_log = 3
-        self.y_log = 80
+        self.y_log = 90
         self.log_len = 93
 
-        self.x_rank = 22
-        self.y_rank = 100
-        self.rank_len = 53
+        self.x_rank = 3
+        self.y_rank = 110
+        self.rank_len = 93
 
-        self.see_password = False
         self.num_ranking = 0
 
         self.score = 0
         self.nb_vies = 3
-        self.start_perso_point_d_interogation = True
+        self.start_state = True
 
         self.img = 0
         self.taille_img = 16
@@ -154,7 +180,7 @@ class Main:
         if len(res) == 0:
             return [True, True]
         
-        return [res[0][1] == password, False]
+        return [verify(password.encode(), res[0][1]), False]
 
 
     def nouveau_nuage(self):
@@ -165,7 +191,7 @@ class Main:
 
         n_type = 112
         dire = 1
-        if randint(0, 1):
+        if bool(randint(0, 1)):
             n_type = 96
             dire = - dire
 
@@ -240,19 +266,19 @@ class Main:
         if self.nb_vies == 0:
             self.finish_page = True
 
-            if self.pseudo != "" and self.send_score:
+            if self.pseudo_log != "" and self.send_score:
 
                 self.send_score = False
 
                 connexion = sqlite3.connect('../data/ranking.db')
                 c = connexion.cursor()
-                data = (self.pseudo, )
+                data = (self.pseudo_log, )
                 c.execute('''SELECT Score FROM "LumberJackGame" WHERE Pseudo = ?''', data)
                 res = c.fetchall() 
 
                 if res[0][0] <= self.score:
-                    data = (self.score, self.pseudo, )
-                    c.execute('''UPDATE "LumberJackGame" set Score = ? WHERE Pseudo = ?''', data)
+                    data = (self.score, self.pseudo_log, )
+                    c.execute('''UPDATE "LumberJackGame" SET Score = ? WHERE Pseudo = ?''', data)
                 connexion.commit()
                 connexion.close()
 
@@ -266,7 +292,7 @@ class Main:
                 self.animation_timer = 0
                 self.retirer_tronc()
                 self.collisions()
-                self.start_perso_point_d_interogation = False
+                self.start_state = False
 
             elif p.btnp(p.KEY_RIGHT):
                 self.animation_direction = "Droite"
@@ -274,7 +300,7 @@ class Main:
                 self.animation_timer = 0
                 self.retirer_tronc()
                 self.collisions()
-                self.start_perso_point_d_interogation = False
+                self.start_state = False
 
         if self.animation_direction is not None:
             self.animation_personnage(self.animation_direction)
@@ -321,13 +347,15 @@ class Main:
         if self.finish_page:
             self.finish_count += 1
         if self.finish_count > 100:
-            
 
 
             self.res = []
-            self.curseur = 1
-            self.pseudo = ""
-            self.password = ""
+            self.curseur_log = 1
+            self.pseudo_log = ""
+            self.password_log = ""
+            self.curseur_del = 1
+            self.pseudo_del = ""
+            self.password_del = ""
             self.dictionnaire = {f"KEY_{lettre}": lettre for lettre in string.ascii_uppercase}
 
             for k in range(10):
@@ -343,19 +371,20 @@ class Main:
             self.send_score = True
 
             self.x_log = 3
-            self.y_log = 80
+            self.y_log = 90
             self.log_len = 93
 
             self.x_rank = 22
-            self.y_rank = 100
+            self.y_rank = 110
             self.rank_len = 53
 
-            self.see_password = False
+            self.see_password_log = False
+            self.see_password_del = False
             self.num_ranking = 0
 
             self.score = 0
             self.nb_vies = 3
-            self.start_perso_point_d_interogation = True
+            self.start_state = True
 
             self.img = 0
             self.taille_img = 16
@@ -406,9 +435,6 @@ class Main:
                 "nb": 1
                                     })
 
-
-
-
         self.time += 1
 
         for nuage in self.liste_nuages:
@@ -421,7 +447,7 @@ class Main:
             if p.btnp(p.KEY_LEFT) or p.btnp(p.KEY_RIGHT):
                 play(("../data/" + str(randint(1,4))+".wav"),async_mode=True)
 
-        if p.btnp(p.KEY_M) and not self.ranking and not self.login_signup and not self.interface:
+        if p.btnp(p.KEY_M) and not self.ranking and not self.login_signup and not self.interface and not self.delete_account:
             if self.state_sound:
                 self.posi_sound = p.play_pos(1)
                 p.stop(self.posi_sound)
@@ -439,10 +465,10 @@ class Main:
             if p.btnp(p.KEY_E):
                 p.quit()
 
-        if self.interface or self.login_signup or self.ranking:
+        if self.interface or self.login_signup or self.ranking or self.delete_account:
             
             if p.btnp(p.KEY_L) and self.interface:
-                self.pseudo = ""
+                self.pseudo_log = ""
                 self.interface = False
                 self.login_signup = True
 
@@ -450,52 +476,62 @@ class Main:
                 self.interface = False
                 self.ranking = True
 
+            elif p.btn(p.KEY_D) and self.interface:
+                self.interface = False
+                self.delete_account = True
+
             if self.login_signup and p.btnp(p.KEY_DELETE):
                 self.login_signup = False
                 self.interface = True
-                self.password = ""
-                self.pseudo = ""
+                self.password_log = ""
+                self.pseudo_log = ""
 
             elif self.ranking and p.btnp(p.KEY_DELETE):
                 self.ranking = False
                 self.interface = True
                 self.num_ranking = 0
 
+            elif self.delete_account and p.btnp(p.KEY_DELETE):
+                self.delete_account = False
+                self.interface = True
+                self.password_del = ""
+                self.pseudo_del = ""
+
             if self.login_signup and not p.btnp(p.KEY_DELETE):
 
                 if p.btnp(p.KEY_KP_MULTIPLY):
-                    self.see_password = not self.see_password
+                    self.see_password_log = not self.see_password_log
 
                 for (key, val) in self.dictionnaire.items():
                     if p.btnp(eval("p." + key)):
-                        if len(self.pseudo) < 16 and self.curseur == 1:
-                            self.pseudo += val
-                        elif len(self.password) < 16 and self.curseur == 2:
-                            self.password += val
+                        if len(self.pseudo_log) < 16 and self.curseur_log == 1:
+                            self.pseudo_log += val
+                        elif len(self.password_log) < 16 and self.curseur_log == 2:
+                            self.password_log += val
 
-                if len(self.pseudo) < 16 and self.curseur == 1 and p.btnp(p.KEY_SPACE):
-                    self.pseudo += "_"
-                elif len(self.password) < 16 and self.curseur == 2 and p.btnp(p.KEY_SPACE):
-                    self.password += "_"
+                if len(self.pseudo_log) < 16 and self.curseur_log == 1 and p.btnp(p.KEY_SPACE):
+                    self.pseudo_log += "_"
+                elif len(self.password_log) < 16 and self.curseur_log == 2 and p.btnp(p.KEY_SPACE):
+                    self.password_log += "_"
 
-                if len(self.pseudo) < 16 and self.curseur == 1 and p.btnp(p.KEY_BACKSPACE):
-                    self.pseudo = self.pseudo[:-1]
-                elif len(self.password) < 16 and self.curseur == 2 and p.btnp(p.KEY_BACKSPACE):
-                    self.password = self.password[:-1]
+                if len(self.pseudo_log) < 16 and self.curseur_log == 1 and p.btnp(p.KEY_BACKSPACE):
+                    self.pseudo_log = self.pseudo_log[:-1]
+                elif len(self.password_log) < 16 and self.curseur_log == 2 and p.btnp(p.KEY_BACKSPACE):
+                    self.password_log = self.password_log[:-1]
 
                 if p.btnp(p.KEY_KP_1):
-                    self.curseur = 1
+                    self.curseur_log = 1
                 elif p.btnp(p.KEY_KP_2):
-                    self.curseur = 2
+                    self.curseur_log = 2
 
-                res = self.pseudo_valide(self.pseudo, self.password)
+                res = self.pseudo_valide(self.pseudo_log, self.password_log)
 
-                if p.btnp(p.KEY_RETURN) and self.password != "" and self.pseudo != "" and res[0]:
+                if p.btnp(p.KEY_RETURN) and self.password_log != "" and self.pseudo_log != "" and res[0]:
                     if res[1]:
                         connexion = sqlite3.connect('../data/ranking.db')
 
                         c = connexion.cursor()  
-                        data = (self.pseudo, self.password, 0, )
+                        data = (self.pseudo_log, sign(self.password_log.encode()), 0, )
                         c.execute('''INSERT INTO LumberJackGame VALUES (?, ?, ?)''', data)
 
                         connexion.commit()
@@ -505,6 +541,51 @@ class Main:
                     self.login_signup = False
                     self.ranking = False
                     self.start_page = True
+                    self.delete_account = False
+
+
+        if self.delete_account and not p.btnp(p.KEY_DELETE):
+
+                if p.btnp(p.KEY_KP_MULTIPLY):
+                    self.see_password_del = not self.see_password_del
+
+                for (key, val) in self.dictionnaire.items():
+                    if p.btnp(eval("p." + key)):
+                        if len(self.pseudo_del) < 16 and self.curseur_del == 1:
+                            self.pseudo_del += val
+                        elif len(self.password_del) < 16 and self.curseur_del == 2:
+                            self.password_del += val
+
+                if len(self.pseudo_del) < 16 and self.curseur_del == 1 and p.btnp(p.KEY_SPACE):
+                    self.pseudo_del += "_"
+                elif len(self.password_del) < 16 and self.curseur_del == 2 and p.btnp(p.KEY_SPACE):
+                    self.password_del += "_"
+
+                if len(self.pseudo_del) < 16 and self.curseur_del == 1 and p.btnp(p.KEY_BACKSPACE):
+                    self.pseudo_del = self.pseudo_del[:-1]
+                elif len(self.password_del) < 16 and self.curseur_del == 2 and p.btnp(p.KEY_BACKSPACE):
+                    self.password_del = self.password_del[:-1]
+
+                if p.btnp(p.KEY_KP_1):
+                    self.curseur_del = 1
+                elif p.btnp(p.KEY_KP_2):
+                    self.curseur_del = 2
+
+                res = self.pseudo_valide(self.pseudo_del, self.password_del)
+
+                if p.btnp(p.KEY_RETURN) and self.password_del != "" and self.pseudo_del != "" and res[0]:
+                    connexion = sqlite3.connect('../data/ranking.db')
+                    c = connexion.cursor()  
+                    data = (self.pseudo_del, sign(self.password_del.encode()), )
+                    c.execute('''DELETE FROM "LumberJackGame" WHERE Pseudo = ? AND Password = ?''', data)
+                    connexion.commit()
+                    connexion.close()
+                    self.interface = True
+                    self.login_signup = False
+                    self.ranking = False
+                    self.start_page = False
+                    self.delete_account = False
+
 
 
 
@@ -523,16 +604,30 @@ class Main:
             p.blt(2, 2, 0, 80, 16, 16, 16, 6)
             p.text(21, 8, "-> E", 0)
 
-            p.rectb(16, 30, 70, 12, 0)
-            p.text(20, 34, "LumberJack Game", 0)
+            c = 8
+            t = self.time % 90
+
+            if t <= 30:
+                c = 5
+            elif t >= 60:
+                c = 3
+
+            p.rectb(16, 30, 70, 12, c)
+            p.text(20, 34, "LumberJack Game", c)
+
+            p.rect(self.x_log, self.y_log - 20, self.log_len, 12, 7)
+            p.rectb(self.x_log, self.y_log - 20, self.log_len, 12, 0)
+            p.text(self.x_log + 2, self.y_log - 16, " Login / Sign-up -> L", 0)
+
 
             p.rect(self.x_log, self.y_log, self.log_len, 12, 7)
             p.rectb(self.x_log, self.y_log, self.log_len, 12, 0)
-            p.text(self.x_log + 2, self.y_log + 4, " Login / Sign-up -> L", 0)
+            p.text(self.x_log + 5, self.y_log + 4, " Delete Account -> D", 0)
 
-            p.rect(self.x_rank, self.y_rank, self.rank_len, 12, 7)
-            p.rectb(self.x_rank, self.y_rank, self.rank_len, 12, 0)
-            p.text(25, 104, "Ranking -> R", 0)
+
+            p.rect(self.x_log, self.y_rank, self.log_len, 12, 7)
+            p.rectb(self.x_log, self.y_rank, self.log_len, 12, 0)
+            p.text(25, 114, "Ranking -> R", 0)
 
             p.rect(15, 150, 70, 12, 8)
             p.rectb(15, 150, 70, 12, 0)
@@ -545,19 +640,19 @@ class Main:
             p.cls(6)
 
             p.rectb(16, 30, 70, 12, 0)
-            p.text(20, 34, "LumberJack Game", 0)
+            p.text(23, 34, "Login / Signup", 0)
 
             p.rect(2, 2, 16, 16, 7)
             p.rectb(2, 2, 16, 16, 0)
             p.blt(2, 2, 0, 64, 16, 16, 16, 6)
             p.text(16, 9, " -> Suppr", 0)
 
-            p.text(15, 60, "Current cursor : " + str(self.curseur), 7)
+            p.text(15, 60, "Current cursor : " + str(self.curseur_log), 7)
 
             p.text(28, 80, "Pseudo -> 1", 0)
             p.rect(15, 90, 70, 12, 7)
             p.rectb(15, 90, 70, 12, 0)
-            p.text(17, 94, self.pseudo, 0)
+            p.text(17, 94, self.pseudo_log, 0)
 
             p.text(24, 110, "Password -> 2", 0)
             p.rect(15, 120, 70, 12, 7)
@@ -566,15 +661,53 @@ class Main:
             p.text(50, 135, "*", 7)
             
 
-            password = "*" * len(self.password)
-            if self.see_password:
-                password = self.password
+            password = "*" * len(self.password_log)
+            if self.see_password_log:
+                password = self.password_log
 
             p.text(17, 124, password, 0)
 
             p.rect(15, 150, 70, 12, 8)
             p.rectb(15, 150, 70, 12, 0)
-            p.text(28, 154, "Press ENTER", 0)
+            p.text(25, 154, "ENTER to PLAY", 0)
+
+
+        elif self.delete_account:
+            p.mouse(True)
+
+            p.cls(6)
+
+            p.rectb(16, 30, 70, 12, 0)
+            p.text(23, 34, "Delete Account", 0)
+
+            p.rect(2, 2, 16, 16, 7)
+            p.rectb(2, 2, 16, 16, 0)
+            p.blt(2, 2, 0, 64, 16, 16, 16, 6)
+            p.text(16, 9, " -> Suppr", 0)
+
+            p.text(15, 60, "Current cursor : " + str(self.curseur_del), 7)
+
+            p.text(28, 80, "Pseudo -> 1", 0)
+            p.rect(15, 90, 70, 12, 7)
+            p.rectb(15, 90, 70, 12, 0)
+            p.text(17, 94, self.pseudo_del, 0)
+
+            p.text(24, 110, "Password -> 2", 0)
+            p.rect(15, 120, 70, 12, 7)
+            p.rectb(15, 120, 70, 12, 0)
+            p.blt(40, 133, 0, 64, 0, 8, 8, 6)
+            p.text(50, 135, "*", 7)
+            
+
+            password = "*" * len(self.password_del)
+            if self.see_password_del:
+                password = self.password_del
+
+            p.text(17, 124, password, 0)
+
+            p.rect(15, 150, 70, 12, 8)
+            p.rectb(15, 150, 70, 12, 0)
+            p.text(20, 154, "ENTER to DELETE", 0)
         
 
         elif self.ranking:
@@ -584,7 +717,7 @@ class Main:
             p.cls(6)
 
             p.rectb(16, 30, 70, 12, 0)
-            p.text(20, 34, "LumberJack Game", 0)
+            p.text(37, 34, "Ranking", 0)
 
             p.rect(2, 2, 16, 16, 7)
             p.rectb(2, 2, 16, 16, 0)
@@ -669,7 +802,7 @@ class Main:
             p.blt(80, 140, 0, 19, 160, 8, 12, 0)
             p.text(self.x_personnage + self.taille_img // 2, self.height // 2 - self.height // 4 - 10, "GAME OVER", 0)
             p.text(self.x_personnage + self.taille_img // 2, self.height // 2 - self.height // 4 - 10 + self.taille_img, "Score: " + str(self.score), 0)
-            # Affiche le paradisf
+            # Affiche le paradis
             p.blt(self.x_origine_tronc - self.taille_img // 2, self.y_origine_tronc + self.taille_img, self.img, 16, 48, self.taille_img * 2, self.taille_img)
             p.blt(self.x_origine_tronc, self.y_origine_tronc, self.img, 0, 128, self.taille_img, self.taille_img, self.trans_font)
             if self.animation_repos == "Gauche":
@@ -706,11 +839,13 @@ class Main:
             p.text(self.width // 9 - self.taille_img // 4, self.taille_img // 2 - self.taille_img // 8, str(self.score), 0)
             for vie in range(self.nb_vies):
                 p.blt(self.width - self.taille_img - vie * 14, 1, self.img, 0, 0, self.taille_img, self.taille_img, self.trans_font)
-            if self.start_perso_point_d_interogation:
+            if self.start_state:
                 p.blt(self.x_personnage, self.y_personnage, self.img, 48, 48, self.taille_img, self.taille_img, self.trans_font)
             if self.state_sound:
                 p.blt(80, 160, 0, 0, 240, 16, 16, 6)
             else:
                 p.blt(80, 160, 0, 16, 240, 16, 16, 6)
+
+
 # Démarrage du jeu
 Main()
