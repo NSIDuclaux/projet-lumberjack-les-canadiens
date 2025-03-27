@@ -35,7 +35,7 @@ class Main:
         self.width = 99
         self.height = 176
         p.init(self.width, self.height, title='LumberJackGame', quit_key=p.KEY_ESCAPE, fps=30)
-        p.load("../res.pyxres", False, False, False, False)
+        p.load("../data/res.pyxres", False, False, False, False)
 
         # Initialisation des variables de jeu
 
@@ -141,7 +141,7 @@ class Main:
 
 
     def pseudo_valide(self, pseudo, password):
-        connexion = sqlite3.connect('../ranking.db')
+        connexion = sqlite3.connect('../data/ranking.db')
         c = connexion.cursor()
 
         data = (pseudo, )
@@ -244,7 +244,7 @@ class Main:
 
                 self.send_score = False
 
-                connexion = sqlite3.connect('../ranking.db')
+                connexion = sqlite3.connect('../data/ranking.db')
                 c = connexion.cursor()
                 data = (self.pseudo, )
                 c.execute('''SELECT Score FROM "LumberJackGame" WHERE Pseudo = ?''', data)
@@ -492,7 +492,7 @@ class Main:
 
                 if p.btnp(p.KEY_RETURN) and self.password != "" and self.pseudo != "" and res[0]:
                     if res[1]:
-                        connexion = sqlite3.connect('../ranking.db')
+                        connexion = sqlite3.connect('../data/ranking.db')
 
                         c = connexion.cursor()  
                         data = (self.pseudo, self.password, 0, )
@@ -592,7 +592,7 @@ class Main:
             p.text(16, 9, " -> Suppr", 0)
 
             if self.num_ranking == 1:
-                connexion = sqlite3.connect('../ranking.db')
+                connexion = sqlite3.connect('../data/ranking.db')
                 c = connexion.cursor()
 
                 c.execute('''SELECT Pseudo, Score FROM LumberJackGame''')
