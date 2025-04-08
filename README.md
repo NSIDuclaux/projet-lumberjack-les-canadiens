@@ -36,4 +36,4 @@ git clone https://github.com/NSIDuclaux/projet-lumberjack-les-canadiens.git
 cd projet-lumberjack-les-canadiens
 
 # Lancer le jeu
-python Final.py
+python main.py
